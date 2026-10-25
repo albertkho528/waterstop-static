@@ -1,0 +1,25 @@
+---
+import { waLink, DEFAULT_WA_TEXT, STORE } from "../data/store";
+const links = [
+  ["#sistem", "Sistem"], ["#cari", "Cari solusi"], ["#produk", "Produk"], ["#layanan", "Layanan"], ["#kontak", "Kontak"],
+];
+const ext = STORE.wa ? { target: "_blank", rel: "noopener" } : {};
+---
+<a class="skip" href="#cari">Langsung ke pencari solusi</a>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Waterstop, ke atas">
+      <svg width="38" height="38" viewBox="0 0 38 38" aria-hidden="true"><rect x="1" y="1" width="36" height="36" fill="none" stroke="#4a9fec" stroke-width="2"/><path d="M19 7c4.5 6 8 10.2 8 14.4A8 8 0 0 1 11 21.4C11 17.2 14.5 13 19 7Z" fill="#8fdcf5"/><rect x="6" y="27" width="26" height="4" fill="#0b5fb4"/></svg>
+      <span><span class="brand-name">WATERSTOP</span><span class="brand-sub">PT JMA · BATAM</span></span>
+    </a>
+    <nav class="links" aria-label="Utama">
+      {links.map(([href, label]) => <a href={href}>{label}</a>)}
+    </nav>
+    <div class="cure" aria-hidden="true"><span>CURING <b id="cureTxt">0%</b></span><div class="cure-bar"><i id="cureBar"></i></div></div>
+    <a class="btn primary sm" href={waLink(DEFAULT_WA_TEXT)} {...ext}>Konsultasi</a>
+    <button class="btn sm menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="mnav">Menu</button>
+  </div>
+  <div class="wrap mobile-nav" id="mnav" hidden>
+    {links.map(([href, label]) => <a href={href}>{label}</a>)}
+  </div>
+</header>

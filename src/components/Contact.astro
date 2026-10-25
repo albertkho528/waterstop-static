@@ -1,0 +1,33 @@
+---
+import { STORE, waLink, DEFAULT_WA_TEXT } from "../data/store";
+const ext = STORE.wa ? { target: "_blank", rel: "noopener" } : {};
+---
+<section class="contact" id="kontak">
+  <div class="wrap">
+    <div class="contact-copy">
+      <div class="eyebrow"><b>Selesai</b> Hubungi kami</div>
+      <h2>Kirim foto<span> bocornya.</span></h2>
+      <p>Foto area, perkiraan luas dan lokasi di Batam. Kami balas dengan saran material atau jadwal survei.</p>
+      <div class="cta-row">
+        <a class="btn primary" href={waLink(DEFAULT_WA_TEXT)} {...ext}>Chat WhatsApp →</a>
+        <a class="btn" href={STORE.maps} target="_blank" rel="noopener">Petunjuk arah</a>
+      </div>
+    </div>
+    <dl class="card">
+      <div class="crow"><dt>Telp / WA</dt><dd id="c-wa">{STORE.phoneDisplay}</dd><button class="copy" data-copy="c-wa" type="button">Salin</button></div>
+      <div class="crow"><dt>Alamat</dt><dd id="c-addr">{STORE.address}</dd><button class="copy" data-copy="c-addr" type="button">Salin</button></div>
+      <div class="crow"><dt>Jam buka</dt><dd>{STORE.hours}</dd><span></span></div>
+      <div class="crow"><dt>Google</dt><dd>{STORE.googleRating.replace(" Google", "")}</dd><span></span></div>
+      <div class="crow"><dt>Merek</dt><dd>Mapei · Bondall</dd><span></span></div>
+    </dl>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap">
+    <span>© {new Date().getFullYear()} {STORE.name} · {STORE.company} · Batam Centre, Kepulauan Riau</span>
+    <span>Mapei dan Bondall adalah merek dagang milik pemiliknya masing-masing.</span>
+  </div>
+</footer>
+
+<a class="btn primary fab" href={waLink(DEFAULT_WA_TEXT)} {...ext}>WhatsApp</a>

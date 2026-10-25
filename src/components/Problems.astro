@@ -1,0 +1,22 @@
+---
+import SectionHead from "./SectionHead.astro";
+const items = [
+  { tag: "Dari atas", title: "Dak bocor", text: "Retak rambut, sambungan dan talang. Air masuk saat hujan deras dan menetes jauh dari titik masuknya.", d: "M17 4v24M8 19l9 9 9-9" },
+  { tag: "Dari samping", title: "Dinding lembap", text: "Cat menggelembung, jamur, plester rapuh. Biasanya rembesan kapiler atau tanah di balik dinding.", d: "M4 17h24M19 8l9 9-9 9" },
+  { tag: "Dari dalam", title: "Kamar mandi rembes", text: "Plafon lantai bawah bernoda. Lapisan di bawah keramik tidak ada, atau putus di sudut dan pipa.", d: "M17 6v22M10 21l7 7 7-7M6 6h22" },
+  { tag: "Dari bawah", title: "Tekanan air", text: "Basement, tandon dan septic menahan air dari arah berlawanan. Butuh sistem yang tahan tekanan negatif.", d: "M17 30V6M8 15l9-9 9 9" },
+];
+---
+<section class="sec" id="masalah">
+  <div class="wrap">
+    <SectionHead layer="01" label="Masalahnya" lead="Curah hujan tinggi, udara laut, dan beton yang bergerak. Bocor jarang punya satu penyebab, jadi solusinya juga jarang satu produk.">Air selalu menemukan <em>jalan.</em></SectionHead>
+    <div class="problems tilt-wrap">
+      {items.map((it) => (
+        <div class="prob tilt">
+          <svg class="arrow" viewBox="0 0 34 34" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d={it.d} /></svg>
+          <span class="tag">{it.tag}</span><h3>{it.title}</h3><p>{it.text}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

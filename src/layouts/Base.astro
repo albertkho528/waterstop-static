@@ -1,0 +1,57 @@
+---
+import "@fontsource/archivo/latin-400";
+import "@fontsource/archivo/latin-500";
+import "@fontsource/archivo/latin-600";
+import "@fontsource/archivo/latin-700";
+import "@fontsource/big-shoulders-display/latin-700";
+import "@fontsource/big-shoulders-display/latin-800";
+import "@fontsource/big-shoulders-display/latin-900";
+import "@fontsource/jetbrains-mono/latin-500";
+import "@fontsource/jetbrains-mono/latin-700";
+import "../styles/global.css";
+import { STORE } from "../data/store";
+
+interface Props { title: string; description: string }
+const { title, description } = Astro.props;
+const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString() : undefined;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "HomeAndConstructionBusiness",
+  name: `${STORE.name} (${STORE.company})`,
+  description,
+  telephone: STORE.phoneDisplay.replace(/[\s-]/g, ""),
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: STORE.street,
+    addressLocality: STORE.locality,
+    addressRegion: STORE.region,
+    postalCode: STORE.postalCode,
+    addressCountry: "ID",
+  },
+  areaServed: "Batam",
+  sameAs: [STORE.facebook, STORE.instagram, STORE.tiktok].filter(Boolean),
+  brand: ["Mapei", "Bondall"],
+};
+---
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#08090b" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    {canonical && <link rel="canonical" href={canonical} />}
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:locale" content="id_ID" />
+    {canonical && <meta property="og:url" content={canonical} />}
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

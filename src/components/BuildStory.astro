@@ -1,0 +1,31 @@
+---
+import SectionHead from "./SectionHead.astro";
+import { BUILD_STEPS } from "../data/areas";
+import { pad2 } from "../lib/templates";
+const n = BUILD_STEPS.length;
+---
+<section class="sec" id="sistem">
+  <div class="wrap">
+    <SectionHead layer="02" label="Sistem kami" lead="Scroll pelan-pelan. Model di samping dibangun persis seperti tim kami bekerja di lokasi, dari beton retak sampai uji genang.">Lapis demi <em>lapis.</em></SectionHead>
+    <div class="build-grid">
+      <div class="build-sticky">
+        <div class="vp" id="buildStage" aria-label="Model 3D pemasangan sistem waterproofing tahap demi tahap">
+          <canvas id="buildGL" aria-hidden="true"></canvas>
+          <div class="hud tl">Simulasi pemasangan</div>
+          <div class="build-hud">
+            <span class="num" id="buildNum">01</span>
+            <span class="name"><span id="buildName">{BUILD_STEPS[0].title}</span><small id="buildStatus">Status: <b>{BUILD_STEPS[0].status}</b></small></span>
+            <div class="bar"><i id="buildBar"></i></div>
+          </div>
+        </div>
+      </div>
+      <ol class="build-steps" id="buildSteps">
+        {BUILD_STEPS.map((s, i) => (
+          <li class={i === 0 ? "on" : undefined} data-status={s.status}>
+            <span class="n">{pad2(i + 1)} / {pad2(n)}</span><h3>{s.title}</h3><p>{s.text}</p><span class="meta">{s.meta}</span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,31 @@
+---
+import SectionHead from "./SectionHead.astro";
+import { STORE } from "../data/store";
+// Ganti tiap `img` dengan path foto di /public/proyek/... untuk menampilkan foto asli.
+const tiles: { title: string; text: string; img?: string }[] = [
+  { title: "Dak beton", text: "Pelapisan membran + uji genang" },
+  { title: "Kamar mandi", text: "Di bawah keramik" },
+  { title: "Kolam", text: "Kolam ikan & renang" },
+  { title: "Tandon", text: "Beton bawah tanah" },
+  { title: "Dinding", text: "Rembesan & retak" },
+];
+const gallery = STORE.instagram || STORE.facebook;
+const socials = [["Facebook", STORE.facebook], ["Instagram", STORE.instagram], ["TikTok", STORE.tiktok]].filter(([, u]) => u);
+---
+<section class="sec" id="proyek">
+  <div class="wrap">
+    <SectionHead layer="06" label="Proyek" lead="Dokumentasi proyek kami unggah rutin, dari kondisi sebelum sampai uji genang.">Lihat <em>pekerjaannya.</em></SectionHead>
+    <div class="proj-grid">
+      {tiles.map((t) => (
+        <a class="ph" href={gallery || "#kontak"} target={gallery ? "_blank" : undefined} rel={gallery ? "noopener" : undefined}
+           style={t.img ? `background-image:linear-gradient(180deg,transparent 30%,rgba(0,0,0,.75)),url(${t.img});background-size:cover;background-position:center` : undefined}>
+          {!t.img && <span class="slot">Foto proyek</span>}
+          <b>{t.title}</b><span>{t.text}</span>
+        </a>
+      ))}
+    </div>
+    <div class="socials">
+      {socials.map(([label, url]) => <a class="btn sm" href={url} target="_blank" rel="noopener">{label}</a>)}
+    </div>
+  </div>
+</section>

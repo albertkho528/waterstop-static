@@ -1,0 +1,36 @@
+---
+import Base from "../layouts/Base.astro";
+import Header from "../components/Header.astro";
+import Hero from "../components/Hero.astro";
+import Problems from "../components/Problems.astro";
+import BuildStory from "../components/BuildStory.astro";
+import Finder from "../components/Finder.astro";
+import Products from "../components/Products.astro";
+import Services from "../components/Services.astro";
+import Projects from "../components/Projects.astro";
+import Audience from "../components/Audience.astro";
+import Faq from "../components/Faq.astro";
+import Contact from "../components/Contact.astro";
+---
+<Base
+  title="Waterstop Batam · Toko & Jasa Waterproofing Mapei, Bondall"
+  description="Toko Waterstop (PT JMA) di Batam Centre: jual material waterproofing Mapei dan Bondall, plus jasa aplikasi untuk dak, kamar mandi, kolam, tandon dan basement."
+>
+  <Header />
+  <main id="top">
+    <Hero />
+    <Problems />
+    <BuildStory />
+    <Finder />
+    <Products />
+    <Services />
+    <Projects />
+    <Audience />
+    <Faq />
+  </main>
+  <Contact />
+</Base>
+
+<script>
+  import "../scripts/main";
+</script>

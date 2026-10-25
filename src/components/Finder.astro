@@ -1,0 +1,28 @@
+---
+import SectionHead from "./SectionHead.astro";
+import { AREAS } from "../data/areas";
+import { areaResult, pad2 } from "../lib/templates";
+---
+<section class="sec" id="cari">
+  <div class="wrap">
+    <SectionHead layer="03" label="Cari solusi" lead="Klik titik di rumah 3D atau pilih area. Kami tunjukkan sistem dan material yang biasa kami pakai. Final tetap setelah survei.">Di mana <em>bocornya?</em></SectionHead>
+    <div class="area-chips" role="group" aria-label="Pilih area bocor" id="areas">
+      {AREAS.map((a, i) => (
+        <button class="chipbtn" type="button" data-id={a.id} aria-pressed={i === 0 ? "true" : "false"}><i>{pad2(i + 1)}</i>{a.name}</button>
+      ))}
+    </div>
+    <div class="finder">
+      <div class="vp" id="houseStage" aria-label="Model rumah 3D tampilan x-ray dengan titik area bocor">
+        <canvas id="houseGL" aria-hidden="true"></canvas>
+        <div class="hotspots" id="hotspots">
+          {AREAS.map((a, i) => (
+            <button class="hs" type="button" data-id={a.id} aria-label={a.title} style="visibility:hidden">{i + 1}<span>{a.name}</span></button>
+          ))}
+        </div>
+        <div class="hud tl">Model rumah · x-ray</div>
+        <div class="hud br">Seret untuk memutar</div>
+      </div>
+      <div class="result" id="result" aria-live="polite" set:html={areaResult(AREAS[0])} />
+    </div>
+  </div>
+</section>

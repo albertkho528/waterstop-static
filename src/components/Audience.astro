@@ -1,0 +1,21 @@
+---
+import SectionHead from "./SectionHead.astro";
+import { waLink, STORE } from "../data/store";
+const wa = (t: string) => ({ href: waLink(t), ...(STORE.wa ? { target: "_blank", rel: "noopener" } : {}) });
+const items = [
+  { title: "Pemilik rumah", text: "Dak atau kamar mandi bocor dan ingin selesai sekali kerja.", cta: "Cari solusi →", link: { href: "#cari" } },
+  { title: "Tukang & aplikator", text: "Butuh material yang tepat dan saran takaran sebelum ke lokasi.", cta: "Lihat produk →", link: { href: "#produk" } },
+  { title: "Kontraktor", text: "Pasokan rutin untuk proyek, atau subkon pekerjaan waterproofing.", cta: "Minta penawaran →", link: wa("Halo Waterstop, saya kontraktor dan mau minta penawaran.") },
+  { title: "Ruko & developer", text: "Dak, balkon dan area basah dalam jumlah unit banyak.", cta: "Jadwalkan survei →", link: wa("Halo Waterstop, saya mau jadwalkan survei untuk proyek ruko/perumahan.") },
+];
+---
+<section class="sec" id="siapa">
+  <div class="wrap">
+    <SectionHead layer="07" label="Untuk siapa" lead="Datang beli dua pail atau minta kami tangani seluruh proyek. Keduanya kami layani.">Dari satu ember sampai <em>satu gedung.</em></SectionHead>
+    <div class="aud tilt-wrap">
+      {items.map((it) => (
+        <div class="tilt"><h3>{it.title}</h3><p>{it.text}</p><a class="go" {...it.link}>{it.cta}</a></div>
+      ))}
+    </div>
+  </div>
+</section>
