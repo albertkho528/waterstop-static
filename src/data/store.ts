@@ -1,4 +1,5 @@
-// Data toko — ubah di sini, semua halaman ikut berubah.
+// Data toko — ubah di sini, semua bahasa ikut berubah.
+// Jam buka dan teks rating per bahasa ada di src/i18n/{id,en,zh}.ts → contact.hoursValue / hero.rating.
 export const STORE = {
   name: "Toko Waterstop",
   company: "PT JMA",
@@ -9,8 +10,6 @@ export const STORE = {
   locality: "Batam",
   region: "Kepulauan Riau",
   postalCode: "29432",
-  hours: "Buka mulai 08.00 WIB", // lengkapi: hari & jam tutup
-  googleRating: "★ 5.0 Google · 3 ulasan",
   maps:
     "https://www.google.com/maps/search/?api=1&query=" +
     encodeURIComponent("Toko Waterstop PT JMA, Ruko Accelence Blk A No 12, Teluk Tering, Batam Centre"),
@@ -24,4 +23,5 @@ export function waLink(text?: string): string {
   return "https://wa.me/" + STORE.wa + (text ? "?text=" + encodeURIComponent(text) : "");
 }
 
-export const DEFAULT_WA_TEXT = "Halo Waterstop, saya mau tanya soal waterproofing.";
+/** Atribut untuk link WhatsApp: buka di tab baru bila nomor terisi. */
+export const waExt = () => (STORE.wa ? { target: "_blank", rel: "noopener" } : {});

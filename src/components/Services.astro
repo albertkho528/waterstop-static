@@ -1,20 +1,24 @@
 ---
 import SectionHead from "./SectionHead.astro";
-const items = [
-  { title: "Survei & diagnosis", text: "Kami cek sumber air, kondisi beton dan retakan, lalu memberi rekomendasi sistem dan penawaran tertulis.", icon: '<circle cx="19" cy="19" r="12"/><path d="M28 28l11 11M19 13v12M13 19h12"/>' },
-  { title: "Aplikasi membran", text: "Pelapisan dak, balkon, kamar mandi, kolam, tandon dan basement dengan sistem Mapei atau Bondall.", icon: '<path d="M4 30h36M4 36h36"/><path d="M10 24c0-6 5-10 12-10s12 4 12 10"/><path d="M22 4v10"/>' },
-  { title: "Perbaikan retak", text: "Penanganan retak ringan, sudut, sambungan dan tembusan pipa sebelum dilapis.", icon: '<path d="M6 8l10 10-6 6 10 10-4 6"/><path d="M26 6l12 12M32 4l8 8"/>' },
-  { title: "Proyek & kontraktor", text: "Pasokan material dan aplikasi untuk ruko, rumah tinggal dan proyek konstruksi. Material saja atau borongan.", icon: '<path d="M4 40h36M8 40V18l14-10 14 10v22"/><path d="M16 40V26h12v14"/>' },
+import type { Content } from "../i18n";
+interface Props { c: Content }
+const { t } = Astro.props.c;
+const S = t.services;
+const icons = [
+  '<circle cx="19" cy="19" r="12"/><path d="M28 28l11 11M19 13v12M13 19h12"/>',
+  '<path d="M4 30h36M4 36h36"/><path d="M10 24c0-6 5-10 12-10s12 4 12 10"/><path d="M22 4v10"/>',
+  '<path d="M6 8l10 10-6 6 10 10-4 6"/><path d="M26 6l12 12M32 4l8 8"/>',
+  '<path d="M4 40h36M8 40V18l14-10 14 10v22"/><path d="M16 40V26h12v14"/>',
 ];
 ---
 <section class="sec" id="layanan">
   <div class="wrap">
-    <SectionHead layer="05" label="Layanan" lead="Material bagus gagal kalau permukaannya tidak disiapkan. Tim Waterstop menangani pekerjaan dari survei sampai uji genang.">Kami juga yang <em>memasang.</em></SectionHead>
+    <SectionHead layerWord={t.layer} layer="05" label={S.label} h2={S.h2} lead={S.lead} />
     <div class="svc-grid tilt-wrap">
-      {items.map((it) => (
+      {S.items.map(([title, text], i) => (
         <div class="svc tilt">
-          <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true" set:html={it.icon} />
-          <div><h3>{it.title}</h3><p>{it.text}</p></div>
+          <svg viewBox="0 0 44 44" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true" set:html={icons[i]} />
+          <div><h3>{title}</h3><p>{text}</p></div>
         </div>
       ))}
     </div>

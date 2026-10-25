@@ -10,16 +10,19 @@ import "@fontsource/jetbrains-mono/latin-500";
 import "@fontsource/jetbrains-mono/latin-700";
 import "../styles/global.css";
 import { STORE } from "../data/store";
+import { LANGS, DICTS, HREFLANG, DEFAULT_LANG, homePath, type Lang } from "../i18n";
 
-interface Props { title: string; description: string }
-const { title, description } = Astro.props;
-const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).toString() : undefined;
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = DICTS[lang];
+const abs = (path: string) => (Astro.site ? new URL(path, Astro.site).toString() : path);
+const canonical = abs(homePath(lang));
 
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "HomeAndConstructionBusiness",
   name: `${STORE.name} (${STORE.company})`,
-  description,
+  description: t.meta.desc,
   telephone: STORE.phoneDisplay.replace(/[\s-]/g, ""),
   address: {
     "@type": "PostalAddress",
@@ -35,20 +38,22 @@ const jsonLd = {
 };
 ---
 <!doctype html>
-<html lang="id">
+<html lang={t.htmlLang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>{title}</title>
-    <meta name="description" content={description} />
+    <title>{t.meta.title}</title>
+    <meta name="description" content={t.meta.desc} />
     <meta name="theme-color" content="#08090b" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    {canonical && <link rel="canonical" href={canonical} />}
+    <link rel="canonical" href={canonical} />
+    {LANGS.map((l) => <link rel="alternate" hreflang={HREFLANG[l]} href={abs(homePath(l))} />)}
+    <link rel="alternate" hreflang="x-default" href={abs(homePath(DEFAULT_LANG))} />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:locale" content="id_ID" />
-    {canonical && <meta property="og:url" content={canonical} />}
+    <meta property="og:title" content={t.meta.title} />
+    <meta property="og:description" content={t.meta.desc} />
+    <meta property="og:locale" content={{ id: "id_ID", en: "en_US", zh: "zh_CN" }[lang]} />
+    <meta property="og:url" content={canonical} />
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   </head>
   <body>

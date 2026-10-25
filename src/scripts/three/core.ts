@@ -58,12 +58,12 @@ export function createStage(el: HTMLElement, canvas: HTMLCanvasElement, fov = 32
   };
   function loop(now: number) {
     const dt = REDUCE ? 1 : Math.min(0.05, (now - last) / 1000); last = now; if (!REDUCE) S.time += dt;
-    S.frame?.(dt); renderer.render(scene, camera); S.after?.();
+    S.frame?.(dt); S.renderer.render(scene, camera); S.after?.();
     raf = vis && !REDUCE ? requestAnimationFrame(loop) : 0;
   }
   function resize() {
     S.w = el.clientWidth || 1; S.h = el.clientHeight || 1;
-    renderer.setSize(S.w, S.h, false); camera.aspect = S.w / S.h;
+    S.renderer.setSize(S.w, S.h, false); camera.aspect = S.w / S.h;
     S.fit?.(camera.aspect); camera.updateProjectionMatrix(); S.kick();
   }
   // seret horizontal untuk memutar; klik tanpa seret tetap jadi klik
@@ -114,14 +114,15 @@ export function glowFloor(size: number, y: number) {
 
 /* ---------- tumpukan lapisan waterproofing ---------- */
 export type LayerKey = "beton" | "primer" | "mesh" | "membran" | "top";
-export interface Layer { key: LayerKey; h: number; name: string; short: string; n: string; sub?: string; mesh: THREE.Mesh; edge: THREE.LineSegments; y: number }
+export interface Layer { key: LayerKey; h: number; n: string; mesh: THREE.Mesh; edge: THREE.LineSegments; y: number }
 
-const LAYER_DEFS: Record<LayerKey, { h: number; name: string; short: string; n: string; sub?: string; mat: () => THREE.MeshStandardMaterialParameters }> = {
-  beton: { h: 1, name: "Pelat beton", short: "Beton", n: "", sub: "substrat", mat: () => ({ map: concreteTex(), roughness: 0.95 }) },
-  primer: { h: 0.07, name: "Primer", short: "Primer", n: "01", mat: () => ({ color: 0x2a3138, roughness: 0.6 }) },
-  mesh: { h: 0.05, name: "Mesh / Mapeband", short: "Mesh", n: "02", mat: () => ({ map: meshTex(), alphaTest: 0.4, side: THREE.DoubleSide, roughness: 0.7 }) },
-  membran: { h: 0.24, name: "Membran ± 2 mm", short: "Membran", n: "03", mat: () => ({ color: 0x245f99, roughness: 0.42 }) },
-  top: { h: 0.09, name: "Top coat UV", short: "Top coat", n: "04", mat: () => ({ color: 0xbac3c9, roughness: 0.5 }) },
+// nama lapisan ada di kamus bahasa (t.layers); di sini hanya tebal, nomor urut dan material
+const LAYER_DEFS: Record<LayerKey, { h: number; n: string; mat: () => THREE.MeshStandardMaterialParameters }> = {
+  beton: { h: 1, n: "", mat: () => ({ map: concreteTex(), roughness: 0.95 }) },
+  primer: { h: 0.07, n: "01", mat: () => ({ color: 0x2a3138, roughness: 0.6 }) },
+  mesh: { h: 0.05, n: "02", mat: () => ({ map: meshTex(), alphaTest: 0.4, side: THREE.DoubleSide, roughness: 0.7 }) },
+  membran: { h: 0.24, n: "03", mat: () => ({ color: 0x245f99, roughness: 0.42 }) },
+  top: { h: 0.09, n: "04", mat: () => ({ color: 0xbac3c9, roughness: 0.5 }) },
 };
 
 export function buildStack(keys: LayerKey[]) {
@@ -132,7 +133,7 @@ export function buildStack(keys: LayerKey[]) {
     const mesh = new THREE.Mesh(new THREE.BoxGeometry(W, d.h, D), new THREE.MeshStandardMaterial({ transparent: true, ...d.mat() }));
     const edge = new THREE.LineSegments(new THREE.EdgesGeometry(mesh.geometry), new THREE.LineBasicMaterial({ color: 0x4a9fec, transparent: true, opacity: 0.4 }));
     mesh.add(edge); group.add(mesh);
-    return { key: k, h: d.h, name: d.name, short: d.short, n: d.n, sub: d.sub, mesh, edge, y: 0 };
+    return { key: k, h: d.h, n: d.n, mesh, edge, y: 0 };
   });
   /** spread: jarak antar lapisan (0 = rapat); appear[i]: 0..1 lapisan turun & muncul */
   function layout(spread: number, appear?: number[]) {

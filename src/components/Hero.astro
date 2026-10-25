@@ -1,35 +1,39 @@
 ---
-import { waLink, DEFAULT_WA_TEXT, STORE } from "../data/store";
-const ext = STORE.wa ? { target: "_blank", rel: "noopener" } : {};
+import { waLink, waExt } from "../data/store";
+import type { Content } from "../i18n";
+interface Props { c: Content }
+const { t } = Astro.props.c;
+const L = t.layers;
+const tapeA = t.tapes.a, tapeB = [...t.tapes.b, ...t.tapes.b];
 ---
 <section class="hero" id="hero">
   <div class="wrap">
     <div class="hero-copy">
-      <div class="eyebrow"><b>Lapisan 00</b> Toko &amp; kontraktor waterproofing</div>
-      <h1>Stop<span>bocor.</span></h1>
-      <p class="lede">Material <strong>Mapei</strong> dan <strong>Bondall</strong>, plus tim yang memasangnya. Dak, kamar mandi, kolam, tandon dan basement di Batam.</p>
+      <div class="eyebrow"><b>{t.layer} 00</b> {t.hero.eyebrow}</div>
+      <h1>{t.hero.h1[0]}<span>{t.hero.h1[1]}</span></h1>
+      <p class="lede" set:html={t.hero.lede} />
       <div class="cta-row">
-        <a class="btn primary" href={waLink(DEFAULT_WA_TEXT)} {...ext}>Chat WhatsApp →</a>
-        <a class="btn" href="#cari">Cari solusi bocor</a>
+        <a class="btn primary" href={waLink(t.wa.default)} {...waExt()}>{t.hero.ctaWa}</a>
+        <a class="btn" href="#cari">{t.hero.ctaFind}</a>
       </div>
-      <div class="hero-meta"><span>Jual material</span><span>Jasa aplikasi</span><span>Batam Centre</span><span>{STORE.googleRating}</span></div>
+      <div class="hero-meta">{[...t.hero.meta, t.hero.rating].map((m) => <span>{m}</span>)}</div>
     </div>
     <div>
-      <div class="vp" id="heroStage" aria-label="Model 3D penampang dak dengan lapisan waterproofing">
+      <div class="vp" id="heroStage" aria-label={t.hero.stageAria}>
         <canvas id="heroGL" aria-hidden="true"></canvas>
         <div class="labels" id="heroLabels"></div>
-        <div class="hud tl">Penampang dak · 3D</div>
-        <div class="hud tr">Seret untuk memutar<br />Scroll untuk merakit</div>
-        <div class="hud bl">Ruang di bawah: <b>kering</b></div>
+        <div class="hud tl">{t.hero.hudTl}</div>
+        <div class="hud tr">{t.hero.hudTr[0]}<br />{t.hero.hudTr[1]}</div>
+        <div class="hud bl" set:html={t.hero.hudBl} />
       </div>
       <div class="fallback-stack" id="heroFallback" hidden>
-        <div class="layer l-top">04 Top coat</div><div class="layer l-mem">03 Membran ± 2 mm</div><div class="layer l-mesh">02 Mesh</div><div class="layer l-pri">01 Primer</div><div class="layer l-con">Pelat beton</div>
+        <div class="layer l-top">04 {L.top.name}</div><div class="layer l-mem">03 {L.membran.name}</div><div class="layer l-mesh">02 {L.mesh.short}</div><div class="layer l-pri">01 {L.primer.name}</div><div class="layer l-con">{L.beton.name}</div>
       </div>
     </div>
   </div>
 </section>
 
 <div class="tapes" aria-hidden="true">
-  <div class="tape b"><div class="tape-track">{[0, 1].map(() => <span>Area kerja<i>/</i> Jangan diinjak<i>/</i> Uji genang 24 jam<i>/</i> Area kerja<i>/</i> Jangan diinjak<i>/</i> Uji genang 24 jam<i>/</i></span>)}</div></div>
-  <div class="tape a"><div class="tape-track">{[0, 1].map(() => <span>Awas bocor<i>▲</i> Mapei<i>▲</i> Bondall<i>▲</i> Dak beton<i>▲</i> Kamar mandi<i>▲</i> Kolam<i>▲</i> Tandon<i>▲</i> Basement<i>▲</i></span>)}</div></div>
+  <div class="tape b"><div class="tape-track">{[0, 1].map(() => <span>{tapeB.map((w) => <Fragment>{w}<i>/</i> </Fragment>)}</span>)}</div></div>
+  <div class="tape a"><div class="tape-track">{[0, 1].map(() => <span>{tapeA.map((w) => <Fragment>{w}<i>▲</i> </Fragment>)}</span>)}</div></div>
 </div>

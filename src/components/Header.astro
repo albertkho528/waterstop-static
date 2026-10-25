@@ -1,23 +1,29 @@
 ---
-import { waLink, DEFAULT_WA_TEXT, STORE } from "../data/store";
-const links = [
-  ["#sistem", "Sistem"], ["#cari", "Cari solusi"], ["#produk", "Produk"], ["#layanan", "Layanan"], ["#kontak", "Kontak"],
-];
-const ext = STORE.wa ? { target: "_blank", rel: "noopener" } : {};
+import { waLink, waExt } from "../data/store";
+import { LANGS, DICTS, homePath, type Content } from "../i18n";
+interface Props { c: Content }
+const { c } = Astro.props;
+const t = c.t;
+const links = [["#sistem", t.nav.system], ["#cari", t.nav.find], ["#produk", t.nav.products], ["#layanan", t.nav.services], ["#kontak", t.nav.contact]];
 ---
-<a class="skip" href="#cari">Langsung ke pencari solusi</a>
+<a class="skip" href="#cari">{t.skip}</a>
 <header class="top">
   <div class="wrap">
-    <a class="brand" href="#top" aria-label="Waterstop, ke atas">
+    <a class="brand" href="#top" aria-label={t.brandAria}>
       <svg width="38" height="38" viewBox="0 0 38 38" aria-hidden="true"><rect x="1" y="1" width="36" height="36" fill="none" stroke="#4a9fec" stroke-width="2"/><path d="M19 7c4.5 6 8 10.2 8 14.4A8 8 0 0 1 11 21.4C11 17.2 14.5 13 19 7Z" fill="#8fdcf5"/><rect x="6" y="27" width="26" height="4" fill="#0b5fb4"/></svg>
       <span><span class="brand-name">WATERSTOP</span><span class="brand-sub">PT JMA · BATAM</span></span>
     </a>
-    <nav class="links" aria-label="Utama">
+    <nav class="links" aria-label={t.nav.aria}>
       {links.map(([href, label]) => <a href={href}>{label}</a>)}
     </nav>
-    <div class="cure" aria-hidden="true"><span>CURING <b id="cureTxt">0%</b></span><div class="cure-bar"><i id="cureBar"></i></div></div>
-    <a class="btn primary sm" href={waLink(DEFAULT_WA_TEXT)} {...ext}>Konsultasi</a>
-    <button class="btn sm menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="mnav">Menu</button>
+    <div class="cure" aria-hidden="true"><span>{t.cure} <b id="cureTxt">0%</b></span><div class="cure-bar"><i id="cureBar"></i></div></div>
+    <nav class="langs" aria-label={t.nav.langAria}>
+      {LANGS.map((l) => (
+        <a href={homePath(l)} hreflang={DICTS[l].htmlLang} lang={DICTS[l].htmlLang} aria-current={l === c.lang ? "true" : undefined}>{DICTS[l].langName}</a>
+      ))}
+    </nav>
+    <a class="btn primary sm consult" href={waLink(t.wa.default)} {...waExt()}>{t.consult}</a>
+    <button class="btn sm menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="mnav" data-menu={t.menu} data-close={t.close}>{t.menu}</button>
   </div>
   <div class="wrap mobile-nav" id="mnav" hidden>
     {links.map(([href, label]) => <a href={href}>{label}</a>)}

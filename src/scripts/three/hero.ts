@@ -1,6 +1,6 @@
 // Hero: penampang dak terurai, merakit saat di-scroll, hujan memercik di top coat.
 import { createStage, buildStack, makeRain, glowFloor } from "./core";
-import { $, clamp, lerp, REDUCE } from "../state";
+import { $, clamp, data, lerp, REDUCE } from "../state";
 import { esc } from "../../lib/templates";
 
 export function initHero() {
@@ -13,7 +13,7 @@ export function initHero() {
 
   const lab = $("#heroLabels");
   lab.innerHTML = st.layers
-    .map((l) => `<div class="lbl">${l.n ? `<i>${l.n}</i>` : ""}<span class="l">${esc(l.name)}${l.sub ? ` · ${esc(l.sub)}` : ""}</span><span class="s">${esc(l.short)}</span></div>`)
+    .map((l) => { const x = data.t.layers[l.key]; return `<div class="lbl">${l.n ? `<i>${l.n}</i>` : ""}<span class="l">${esc(x.name)}${x.sub ? ` · ${esc(x.sub)}` : ""}</span><span class="s">${esc(x.short)}</span></div>`; })
     .join("");
   const lbls = [...lab.children] as HTMLElement[];
 

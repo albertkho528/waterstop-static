@@ -1,32 +1,36 @@
 ---
 import SectionHead from "./SectionHead.astro";
-import { PRODUCTS, BRANDS } from "../data/products";
+import { BRANDS } from "../data/products";
 import { productDetail, pad2 } from "../lib/templates";
+import type { Content } from "../i18n";
+interface Props { c: Content }
+const { t, products } = Astro.props.c;
+const P = t.products;
 ---
 <section class="sec" id="produk">
   <div class="wrap">
-    <SectionHead layer="04" label="Produk" lead="Yang kami jual adalah yang kami aplikasikan di proyek. Putar raknya, pilih produk, lalu tanyakan stok dan harga.">Material yang kami <em>pakai sendiri.</em></SectionHead>
+    <SectionHead layerWord={t.layer} layer="04" label={P.label} h2={P.h2} lead={P.lead} />
     <div class="prod3d">
-      <div class="vp" id="pailStage" aria-label="Rak produk 3D">
+      <div class="vp" id="pailStage" aria-label={P.stageAria}>
         <canvas id="pailGL" aria-hidden="true"></canvas>
-        <div class="hud tl" id="pailCount">01 / {pad2(PRODUCTS.length)}</div>
-        <div class="hud tr">Seret atau klik produk</div>
-        <div class="pnav"><button type="button" id="pPrev" aria-label="Produk sebelumnya">←</button><button type="button" id="pNext" aria-label="Produk berikutnya">→</button></div>
+        <div class="hud tl" id="pailCount">01 / {pad2(products.length)}</div>
+        <div class="hud tr">{P.hudTr}</div>
+        <div class="pnav"><button type="button" id="pPrev" aria-label={P.prev}>←</button><button type="button" id="pNext" aria-label={P.next}>→</button></div>
       </div>
-      <div class="pdetail" id="pDetail" aria-live="polite" set:html={productDetail(PRODUCTS[0])} />
+      <div class="pdetail" id="pDetail" aria-live="polite" set:html={productDetail(products[0], t)} />
     </div>
     <div class="pindex" id="pIndex">
       {BRANDS.map((b) => (
         <Fragment>
           <span class="brandlbl">{b}</span>
           <div class="row">
-            {PRODUCTS.map((p, i) => p.brand === b && (
+            {products.map((p, i) => p.brand === b && (
               <button class="chipbtn" type="button" data-i={i} aria-pressed={i === 0 ? "true" : "false"}>{p.name}</button>
             ))}
           </div>
         </Fragment>
       ))}
     </div>
-    <p class="tds-note">Spesifikasi ringkas. Selalu ikuti lembar data teknis (TDS) pabrik untuk takaran, ketebalan dan waktu kering. Bentuk kemasan pada model hanya ilustrasi.</p>
+    <p class="tds-note">{P.tdsNote}</p>
   </div>
 </section>

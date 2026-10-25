@@ -1,0 +1,50 @@
+---
+// Seluruh halaman untuk satu bahasa. Dipakai oleh src/pages/index.astro, en/index.astro, zh/index.astro.
+import Base from "../layouts/Base.astro";
+import Header from "./Header.astro";
+import Hero from "./Hero.astro";
+import Problems from "./Problems.astro";
+import BuildStory from "./BuildStory.astro";
+import Finder from "./Finder.astro";
+import Products from "./Products.astro";
+import Services from "./Services.astro";
+import Projects from "./Projects.astro";
+import Audience from "./Audience.astro";
+import Faq from "./Faq.astro";
+import Contact from "./Contact.astro";
+import { content, type Lang } from "../i18n";
+
+interface Props { lang: Lang }
+const c = content(Astro.props.lang);
+// Data yang dibutuhkan skrip di browser (teks hasil pencarian, detail produk, label 3D).
+const clientData = {
+  lang: c.lang,
+  products: c.products,
+  areas: c.areas,
+  steps: c.steps,
+  t: {
+    htmlLang: c.t.htmlLang, layers: c.t.layers, wa: c.t.wa, finder: c.t.finder, products: c.t.products,
+    build: { status: c.t.build.status }, contact: { copy: c.t.contact.copy, copied: c.t.contact.copied },
+  },
+};
+---
+<Base lang={c.lang}>
+  <Header c={c} />
+  <main id="top">
+    <Hero c={c} />
+    <Problems c={c} />
+    <BuildStory c={c} />
+    <Finder c={c} />
+    <Products c={c} />
+    <Services c={c} />
+    <Projects c={c} />
+    <Audience c={c} />
+    <Faq c={c} />
+  </main>
+  <Contact c={c} />
+  <script type="application/json" id="i18n-data" set:html={JSON.stringify(clientData)} />
+</Base>
+
+<script>
+  import "../scripts/main";
+</script>

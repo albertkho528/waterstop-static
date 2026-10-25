@@ -1,7 +1,7 @@
 // Rumah x-ray: titik area bocor, kamera terbang ke area terpilih, bagian terkait menyala biru.
 import { THREE, createStage, makeRain } from "./core";
 import { $, lerp, REDUCE, hooks, state } from "../state";
-import { AREAS } from "../../data/areas";
+import { AREAS } from "../../data/areas"; // urutan id sama dengan tombol titik di halaman
 
 type Part = { mesh: THREE.Mesh; edge: THREE.LineSegments; baseC: THREE.Color; baseO: number; baseE: number; k: number; tk: number };
 type View = { t: [number, number, number]; az: number; el: number; d: number };

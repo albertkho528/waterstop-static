@@ -1,18 +1,16 @@
 ---
 import SectionHead from "./SectionHead.astro";
-const faqs = [
-  ["Bisa beli material saja tanpa jasa?", "Bisa. Datang ke toko di Ruko Accelence, Batam Centre, atau pesan lewat WhatsApp. Kami bantu pilih produk dan hitung kebutuhan dari luas area."],
-  ["Bagaimana tahu produk yang tepat?", "Tergantung area, arah tekanan air, dan apakah permukaan akan ditutup keramik atau terpapar matahari. Kirim foto dan ukuran area, atau minta survei."],
-  ["Kenapa perlu uji genang?", "Uji genang memastikan lapisan benar-benar kedap sebelum ditutup keramik atau screed. Membongkar keramik jauh lebih mahal daripada menunggu satu hari."],
-  ["Apakah ada garansi pekerjaan?", "Ketentuan garansi tergantung jenis pekerjaan dan sistem yang dipakai. Tanyakan saat penawaran agar tertulis jelas."],
-];
-const ld = { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faqs.map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })) };
+import type { Content } from "../i18n";
+interface Props { c: Content }
+const { t } = Astro.props.c;
+const F = t.faq;
+const ld = { "@context": "https://schema.org", "@type": "FAQPage", inLanguage: t.htmlLang, mainEntity: F.items.map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })) };
 ---
 <section class="sec" id="faq">
   <div class="wrap">
-    <SectionHead layer="08" label="Pertanyaan">Yang sering <em>ditanya.</em></SectionHead>
+    <SectionHead layerWord={t.layer} layer="08" label={F.label} h2={F.h2} />
     <div class="faq">
-      {faqs.map(([q, a]) => <details><summary>{q}</summary><p>{a}</p></details>)}
+      {F.items.map(([q, a]) => <details><summary>{q}</summary><p>{a}</p></details>)}
     </div>
   </div>
   <script type="application/ld+json" set:html={JSON.stringify(ld)} />

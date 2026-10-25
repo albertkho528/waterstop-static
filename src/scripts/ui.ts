@@ -1,13 +1,14 @@
 // Interaksi non-3D: menu, meter curing, kartu miring, salin, pencari solusi, pilihan produk, tahap pemasangan.
-import { AREAS, BUILD_STEPS } from "../data/areas";
-import { PRODUCTS } from "../data/products";
 import { areaResult, productDetail, pad2 } from "../lib/templates";
-import { $, clamp, hooks, REDUCE, state } from "./state";
+import { $, clamp, data, hooks, REDUCE, state } from "./state";
+
+const PRODUCTS = data.products, AREAS = data.areas, BUILD_STEPS = data.steps;
+const t = data.t as unknown as import("../i18n").Dict;
 
 /* menu mobile */
 {
   const mb = $<HTMLButtonElement>("#menuBtn"), mn = $("#mnav");
-  const set = (open: boolean) => { mn.hidden = !open; mb.setAttribute("aria-expanded", String(open)); mb.textContent = open ? "Tutup" : "Menu"; };
+  const set = (open: boolean) => { mn.hidden = !open; mb.setAttribute("aria-expanded", String(open)); mb.textContent = (open ? mb.dataset.close : mb.dataset.menu) || ""; };
   mb.addEventListener("click", () => set(mn.hidden));
   mn.addEventListener("click", (e) => { if ((e.target as Element).tagName === "A") set(false); });
 }
@@ -37,7 +38,7 @@ if (!REDUCE && matchMedia("(hover:hover) and (pointer:fine)").matches) {
 /* tombol salin */
 document.querySelectorAll<HTMLButtonElement>(".copy").forEach((b) => b.addEventListener("click", () => {
   const el = document.getElementById(b.dataset.copy!)!;
-  const done = () => { b.textContent = "Tersalin"; setTimeout(() => (b.textContent = "Salin"), 1500); };
+  const done = () => { b.textContent = data.t.contact.copied; setTimeout(() => (b.textContent = data.t.contact.copy), 1500); };
   const sel = () => { const r = document.createRange(); r.selectNodeContents(el); const s = getSelection()!; s.removeAllRanges(); s.addRange(r); };
   try { navigator.clipboard.writeText(el.textContent || "").then(done, sel); } catch { sel(); }
 }));
@@ -48,7 +49,7 @@ export function selectProduct(i: number) {
   const n = PRODUCTS.length; state.pSel = ((i % n) + n) % n;
   pIndex.querySelectorAll<HTMLElement>(".chipbtn").forEach((b) => b.setAttribute("aria-pressed", String(+b.dataset.i! === state.pSel)));
   $("#pailCount").textContent = pad2(state.pSel + 1) + " / " + pad2(n);
-  pDetail.innerHTML = productDetail(PRODUCTS[state.pSel]);
+  pDetail.innerHTML = productDetail(PRODUCTS[state.pSel], t);
   hooks.pailGoTo(state.pSel);
 }
 pIndex.addEventListener("click", (e) => { const b = (e.target as Element).closest<HTMLElement>(".chipbtn"); if (b) selectProduct(+b.dataset.i!); });
@@ -62,7 +63,7 @@ export function showArea(id: string, fly = true) {
   state.selectedArea = a.id;
   areasEl.querySelectorAll<HTMLElement>(".chipbtn").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.id === a.id)));
   document.querySelectorAll<HTMLElement>(".hs").forEach((h) => h.classList.toggle("on", h.dataset.id === a.id));
-  resEl.innerHTML = areaResult(a);
+  resEl.innerHTML = areaResult(a, t, PRODUCTS);
   hooks.houseFocus(a.id, fly);
 }
 areasEl.addEventListener("click", (e) => { const b = (e.target as Element).closest<HTMLElement>(".chipbtn"); if (b) showArea(b.dataset.id!); });
@@ -85,7 +86,7 @@ resEl.addEventListener("click", (e) => {
     if (a !== active) {
       active = a; items.forEach((li, i) => li.classList.toggle("on", i === a));
       $("#buildNum").textContent = pad2(a + 1); $("#buildName").textContent = BUILD_STEPS[a].title;
-      $("#buildStatus").innerHTML = "Status: <b>" + BUILD_STEPS[a].status + "</b>";
+      $("#buildStatus").innerHTML = `${data.t.build.status}: <b>${BUILD_STEPS[a].status}</b>`;
     }
     $("#buildBar").style.width = (p * 100).toFixed(1) + "%";
   };

@@ -1,9 +1,9 @@
 ---
-interface Props { layer: string; label: string; lead?: string }
-const { layer, label, lead } = Astro.props;
+interface Props { layerWord: string; layer: string; label: string; h2: [string, string]; lead?: string }
+const { layerWord, layer, label, h2, lead } = Astro.props;
 ---
 <div class="sec-head">
-  <div class="eyebrow"><b>Lapisan {layer}</b> {label}</div>
-  <h2><slot /></h2>
+  <div class="eyebrow"><b>{layerWord} {layer}</b> {label}</div>
+  <h2>{h2[0]} <em>{h2[1]}</em></h2>
   {lead && <p>{lead}</p>}
 </div>
