@@ -23,8 +23,9 @@ npm run preview   # cek hasil build secara lokal
 | Semua teks halaman (judul, deskripsi, FAQ, pesan WhatsApp, jam buka) | `src/i18n/id.ts`, `en.ts`, `zh.ts` |
 | Daftar produk (merek, nama, bentuk kemasan 3D) | `src/data/products.ts` + deskripsinya di `productText` tiap file bahasa |
 | Foto produk asli di rak 3D | PNG berlatar transparan di `public/produk/`, lalu isi `photo` produk itu di `src/data/products.ts` |
+| Logo | `public/brand/` (SVG + PNG), ikon di header ada di `src/components/Header.astro`, favicon di `public/favicon.svg` |
 | Area bocor di pencari solusi | `src/data/areas.ts` + teksnya di `areas` tiap file bahasa |
-| Foto proyek | taruh foto di `public/proyek/`, lalu isi daftar `IMAGES` di `src/components/Projects.astro` |
+| Foto proyek & toko | `public/proyek/` (WebP); urutan di `IMAGES` pada `src/components/Projects.astro`, teks di `projects.tiles` tiap file bahasa |
 | Warna, font, ukuran | variabel di bagian atas `src/styles/global.css` |
 | Domain (untuk canonical & SEO) | `site` di `astro.config.mjs` |
 
@@ -51,6 +52,19 @@ Produk baru otomatis muncul di rak 3D, daftar produk, dan bisa dipakai di pencar
 - Halaman Mandarin memuat font Noto Sans SC (hanya potongan huruf yang dipakai yang diunduh browser).
 - Setiap halaman punya `hreflang` dan judul/deskripsi sendiri supaya Google menampilkan versi bahasa yang tepat.
   Isi `site` di `astro.config.mjs` dengan domain asli agar alamat-alamat itu lengkap.
+
+## SEO
+
+- Domain diatur di `astro.config.mjs` (`site: "https://waterstop.id"`) dan di baris `Sitemap` pada `public/robots.txt`.
+- Setiap bahasa punya judul, deskripsi, `canonical`, `hreflang` (id, en, zh-Hans, x-default) dan gambar share sendiri
+  (`public/og/og-id.png`, `og-en.png`, `og-zh.png`, 1200×630).
+- `sitemap.xml` dibuat otomatis saat build, lengkap dengan pasangan hreflang.
+- Data terstruktur (JSON-LD): bisnis lokal (alamat, telepon, peta, merek, katalog produk, layanan, bahasa layanan),
+  WebSite, WebPage dan FAQPage.
+- Judul utama (h1) berisi kalimat kata kunci yang tersembunyi secara visual (`h1sr` di file bahasa).
+- Foto proyek dan foto toko punya teks alt per bahasa.
+- Setelah online: daftarkan situs di Google Search Console, kirim `https://waterstop.id/sitemap.xml`,
+  dan tambahkan link waterstop.id di Google Business Profile toko.
 
 ## Struktur
 

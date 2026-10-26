@@ -6,7 +6,8 @@ import { $, lerp, hooks, state } from "../state";
 import { PRODUCTS, type Product } from "../../data/products";
 import { selectProduct } from "../ui";
 
-type Item = { g: THREE.Group; labels: THREE.MeshStandardMaterial[]; a: number; yOff: number; k: number };
+type Mat = THREE.MeshStandardMaterial | THREE.MeshBasicMaterial;
+type Item = { g: THREE.Group; labels: Mat[]; a: number; yOff: number; k: number; photo: boolean; shadow: THREE.Mesh };
 
 export function initPails() {
   const el = $("#pailStage");
@@ -95,20 +96,26 @@ export function initPails() {
   }
 
   const loader = new THREE.TextureLoader();
+  // soft contact shadow under every item
+  const shadowTex = ctex(128, 128, (g, w, h) => {
+    const gr = g.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2);
+    gr.addColorStop(0, "rgba(0,0,0,.75)"); gr.addColorStop(0.55, "rgba(0,0,0,.35)"); gr.addColorStop(1, "rgba(0,0,0,0)");
+    g.fillStyle = gr; g.fillRect(0, 0, w, h);
+  });
   const items: Item[] = PRODUCTS.map((p, i) => {
-    const g = new THREE.Group(); const labels: THREE.MeshStandardMaterial[] = [];
+    const g = new THREE.Group(); const labels: Mat[] = [];
     const L = (tex: THREE.Texture) => { const m = std({ map: tex }); labels.push(m); return m; };
     let yOff = 0;
 
     if (p.photo) {
-      // foto asli: kartu berdiri dengan latar transparan
-      const mat = new THREE.MeshStandardMaterial({ transparent: true, alphaTest: 0.5, side: THREE.DoubleSide, roughness: 0.6 });
+      // foto asli: kartu berdiri yang selalu menghadap kamera, tanpa pencahayaan agar warnanya asli
+      const mat = new THREE.MeshBasicMaterial({ transparent: true, alphaTest: 0.08, side: THREE.DoubleSide, toneMapped: false, depthWrite: true });
       labels.push(mat);
-      const card = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), mat); card.rotation.y = Math.PI; g.add(card);
+      const card = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), mat); card.visible = false; g.add(card);
       loader.load(p.photo, (tex) => {
-        tex.colorSpace = THREE.SRGBColorSpace; mat.map = tex; mat.needsUpdate = true;
-        const img = tex.image as HTMLImageElement, hgt = 1.6, wid = hgt * (img.width / img.height);
-        card.scale.set(wid, hgt, 1); card.position.y = FLOOR + hgt / 2; S.kick();
+        tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8; mat.map = tex; mat.needsUpdate = true;
+        const img = tex.image as HTMLImageElement, hgt = 1.75, wid = Math.min(1.9, hgt * (img.width / img.height));
+        card.scale.set(wid, wid / (img.width / img.height), 1); card.position.y = FLOOR + card.scale.y / 2; card.visible = true; S.kick();
       });
     } else if (p.shape === "kit") {
       const s = sack(L(flatLabel(p, p.pack?.sack ?? ""))); s.position.x = -0.3; s.rotation.y = 0.12; g.add(s);
@@ -143,7 +150,9 @@ export function initPails() {
     // sisi depan model = -z lokal; diputar agar menghadap keluar lingkaran
     const a = i * STEP; g.position.set(R * Math.sin(a), yOff, R * Math.cos(a)); g.rotation.y = a + Math.PI;
     g.userData.i = i; ring.add(g);
-    return { g, labels, a, yOff, k: 0 };
+    const shadow = new THREE.Mesh(new THREE.PlaneGeometry(1.9, 1.1), new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false }));
+    shadow.rotation.x = -Math.PI / 2; shadow.position.set(R * Math.sin(a), FLOOR + 0.012, R * Math.cos(a)); shadow.rotation.z = -a; ring.add(shadow);
+    return { g, labels, a, yOff, k: 0, photo: !!p.photo, shadow };
   });
 
   let ringRot = 0, target = 0, dragging = false;
@@ -159,8 +168,11 @@ export function initPails() {
       const on = i === state.pSel; it.k = lerp(it.k, on ? 1 : 0, Math.min(1, dt * 6));
       it.g.scale.setScalar(0.86 + it.k * 0.26);
       it.g.position.y = it.yOff + it.k * (0.15 + Math.sin(S.time * 1.6) * 0.06);
-      it.g.rotation.y = it.a + Math.PI + (on ? Math.sin(S.time * 0.8) * 0.35 : 0);
+      // foto selalu menghadap kamera (batalkan putaran rak); model 3D tetap bergoyang pelan saat dipilih
+      it.g.rotation.y = it.photo ? -ringRot + (on ? Math.sin(S.time * 0.8) * 0.06 : 0) : it.a + Math.PI + (on ? Math.sin(S.time * 0.8) * 0.35 : 0);
       const c = 0.42 + it.k * 0.58; it.labels.forEach((m) => m.color.setRGB(c, c, c));
+      const lift = it.g.position.y - it.yOff; it.shadow.scale.setScalar((0.86 + it.k * 0.26) * (1 - lift * 0.6));
+      (it.shadow.material as THREE.MeshBasicMaterial).opacity = 0.9 - lift * 1.5;
     });
   };
   S.onDrag = (dx) => { dragging = true; ringRot += dx * 0.006; };

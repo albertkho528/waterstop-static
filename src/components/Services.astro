@@ -22,5 +22,15 @@ const icons = [
         </div>
       ))}
     </div>
+    <div class="team">
+      <div class="team-copy">
+        <span class="eyebrow"><b>{S.team.eyebrow}</b></span>
+        <h3>{S.team.title}</h3>
+        <p>{S.team.body}</p>
+      </div>
+      <dl class="creds">
+        {S.team.creds.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
+      </dl>
+    </div>
   </div>
 </section>

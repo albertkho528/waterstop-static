@@ -10,7 +10,7 @@ type SecHead = { label: string; h2: [string, string]; lead?: string };
 export interface Dict {
   htmlLang: string;
   langName: string; // label di pemilih bahasa
-  meta: { title: string; desc: string };
+  meta: { title: string; desc: string; ogAlt: string };
   nav: { system: string; find: string; products: string; services: string; contact: string; aria: string; langAria: string };
   skip: string;
   brandAria: string;
@@ -21,7 +21,7 @@ export interface Dict {
   layer: string;
   wa: { default: string; leak: string; survey: string; product: string; contractor: string; developer: string };
   hero: {
-    eyebrow: string; h1: [string, string]; lede: string; ctaWa: string; ctaFind: string; meta: string[]; rating: string;
+    eyebrow: string; h1: [string, string]; h1sr: string; ntu: string; lede: string; ctaWa: string; ctaFind: string; meta: string[]; rating: string;
     stageAria: string; hudTl: string; hudTr: [string, string]; hudBl: string;
   };
   layers: Record<"beton" | "primer" | "mesh" | "membran" | "top", LayerText>;
@@ -36,14 +36,14 @@ export interface Dict {
   areas: Record<"dak" | "km" | "kolam" | "tandon" | "basement" | "retak", AreaText>;
   products: SecHead & { stageAria: string; hudTr: string; prev: string; next: string; ctaPrice: string; tdsNote: string };
   productText: Record<string, ProductText>;
-  services: SecHead & { items: [string, string][] };
+  services: SecHead & { items: [string, string][]; team: { eyebrow: string; title: string; body: string; creds: [string, string][] } };
   projects: SecHead & { slot: string; tiles: [string, string][] };
   audience: SecHead & { items: [string, string, string][] };
   faq: SecHead & { items: [string, string][] };
   contact: {
     eyebrow: [string, string]; h2: [string, string]; lead: string;
     phone: string; address: string; hours: string; google: string; brands: string;
-    copy: string; copied: string; directions: string; hoursValue: string; ratingShort: string;
+    copy: string; copied: string; directions: string; hoursValue: string; ratingShort: string; store: string;
   };
   footer: { area: string; tm: string };
 }

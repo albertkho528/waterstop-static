@@ -15,6 +15,10 @@ const C = t.contact;
         <a class="btn primary" href={waLink(t.wa.default)} {...waExt()}>{t.hero.ctaWa}</a>
         <a class="btn" href={STORE.maps} target="_blank" rel="noopener">{C.directions}</a>
       </div>
+      <figure class="store">
+        <img src="/proyek/toko.webp" alt={`${C.store} · Waterstop Mapei Bondall`} loading="lazy" decoding="async" width="960" height="720" />
+        <figcaption>{C.store}</figcaption>
+      </figure>
     </div>
     <dl class="card">
       <div class="crow"><dt>{C.phone}</dt><dd id="c-wa">{STORE.phoneDisplay}</dd><button class="copy" data-copy="c-wa" type="button">{C.copy}</button></div>

@@ -10,20 +10,30 @@ import "@fontsource/jetbrains-mono/latin-500";
 import "@fontsource/jetbrains-mono/latin-700";
 import "../styles/global.css";
 import { STORE } from "../data/store";
+import { PRODUCTS } from "../data/products";
 import { LANGS, DICTS, HREFLANG, DEFAULT_LANG, homePath, type Lang } from "../i18n";
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const t = DICTS[lang];
-const abs = (path: string) => (Astro.site ? new URL(path, Astro.site).toString() : path);
+const site = Astro.site ?? new URL("https://waterstop.id");
+const abs = (path: string) => new URL(path, site).toString();
 const canonical = abs(homePath(lang));
+const ogImage = abs(`/og/og-${lang}.png`);
+const OG_LOCALE: Record<Lang, string> = { id: "id_ID", en: "en_US", zh: "zh_CN" };
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "HomeAndConstructionBusiness",
-  name: `${STORE.name} (${STORE.company})`,
+// Data terstruktur untuk Google: bisnis lokal + situs + katalog produk
+const business = {
+  "@type": ["HomeAndConstructionBusiness", "Store"],
+  "@id": abs("/#business"),
+  name: "Waterstop",
+  alternateName: [`${STORE.name}`, `${STORE.name} ${STORE.company}`, "PT JMA Waterstop Batam"],
   description: t.meta.desc,
+  url: canonical,
+  logo: abs("/brand/waterstop-logo-icon-1024.png"),
+  image: [abs("/proyek/toko.webp"), ogImage],
   telephone: STORE.phoneDisplay.replace(/[\s-]/g, ""),
+  hasMap: STORE.maps,
   address: {
     "@type": "PostalAddress",
     streetAddress: STORE.street,
@@ -32,10 +42,47 @@ const jsonLd = {
     postalCode: STORE.postalCode,
     addressCountry: "ID",
   },
-  areaServed: "Batam",
+  areaServed: { "@type": "City", name: "Batam" },
   sameAs: [STORE.facebook, STORE.instagram, STORE.tiktok].filter(Boolean),
-  brand: ["Mapei", "Bondall"],
+  brand: [{ "@type": "Brand", name: "Mapei" }, { "@type": "Brand", name: "Bondall" }],
+  knowsAbout: ["waterproofing", "Mapei", "Bondall", "roof slab waterproofing", "bathroom waterproofing", "basement waterproofing", "civil engineering"],
+  contactPoint: {
+    "@type": "ContactPoint",
+    telephone: STORE.phoneDisplay.replace(/[\s-]/g, ""),
+    contactType: "customer service",
+    areaServed: "ID",
+    availableLanguage: ["Indonesian", "English", "Chinese"],
+  },
+  hasOfferCatalog: {
+    "@type": "OfferCatalog",
+    name: t.products.label,
+    itemListElement: PRODUCTS.map((p) => ({
+      "@type": "Offer",
+      itemOffered: { "@type": "Product", name: `${p.brand} ${p.name}`, brand: { "@type": "Brand", name: p.brand }, description: t.productText[p.name].type },
+    })),
+  },
+  makesOffer: t.services.items.map(([name, description]) => ({ "@type": "Offer", itemOffered: { "@type": "Service", name, description } })),
 };
+const website = {
+  "@type": "WebSite",
+  "@id": abs("/#website"),
+  url: abs("/"),
+  name: "Waterstop",
+  inLanguage: LANGS.map((l) => DICTS[l].htmlLang),
+  publisher: { "@id": abs("/#business") },
+};
+const webpage = {
+  "@type": "WebPage",
+  "@id": canonical + "#webpage",
+  url: canonical,
+  name: t.meta.title,
+  description: t.meta.desc,
+  inLanguage: t.htmlLang,
+  isPartOf: { "@id": abs("/#website") },
+  about: { "@id": abs("/#business") },
+  primaryImageOfPage: ogImage,
+};
+const jsonLd = { "@context": "https://schema.org", "@graph": [business, website, webpage] };
 ---
 <!doctype html>
 <html lang={t.htmlLang}>
@@ -44,16 +91,33 @@ const jsonLd = {
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{t.meta.title}</title>
     <meta name="description" content={t.meta.desc} />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta name="theme-color" content="#08090b" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/brand/waterstop-logo-icon-1024.png" />
     <link rel="canonical" href={canonical} />
     {LANGS.map((l) => <link rel="alternate" hreflang={HREFLANG[l]} href={abs(homePath(l))} />)}
     <link rel="alternate" hreflang="x-default" href={abs(homePath(DEFAULT_LANG))} />
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Waterstop" />
     <meta property="og:title" content={t.meta.title} />
     <meta property="og:description" content={t.meta.desc} />
-    <meta property="og:locale" content={{ id: "id_ID", en: "en_US", zh: "zh_CN" }[lang]} />
     <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={OG_LOCALE[lang]} />
+    {LANGS.filter((l) => l !== lang).map((l) => <meta property="og:locale:alternate" content={OG_LOCALE[l]} />)}
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={t.meta.ogAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={t.meta.title} />
+    <meta name="twitter:description" content={t.meta.desc} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <meta name="geo.region" content="ID-RI" />
+    <meta name="geo.placename" content="Batam" />
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   </head>
   <body>

@@ -10,13 +10,13 @@ const tapeA = t.tapes.a, tapeB = [...t.tapes.b, ...t.tapes.b];
   <div class="wrap">
     <div class="hero-copy">
       <div class="eyebrow"><b>{t.layer} 00</b> {t.hero.eyebrow}</div>
-      <h1>{t.hero.h1[0]}<span>{t.hero.h1[1]}</span></h1>
+      <h1>{t.hero.h1[0]}<span>{t.hero.h1[1]}</span><em class="sr-only"> {t.hero.h1sr}</em></h1>
       <p class="lede" set:html={t.hero.lede} />
       <div class="cta-row">
         <a class="btn primary" href={waLink(t.wa.default)} {...waExt()}>{t.hero.ctaWa}</a>
         <a class="btn" href="#cari">{t.hero.ctaFind}</a>
       </div>
-      <div class="hero-meta">{[...t.hero.meta, t.hero.rating].map((m) => <span>{m}</span>)}</div>
+      <div class="hero-meta">{[...t.hero.meta, t.hero.rating].map((m) => <span>{m}</span>)}<span class="ntu">{t.hero.ntu}</span></div>
     </div>
     <div>
       <div class="vp" id="heroStage" aria-label={t.hero.stageAria}>
