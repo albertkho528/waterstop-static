@@ -12,7 +12,7 @@ FROM alpine:3.24 AS compress
 WORKDIR /app
 RUN apk add --no-cache brotli zstd
 COPY --link --from=builder /app/dist /app/dist
-RUN find /app/dist -type f \( -name '*.html' -o -name '*.css' -o -name '*.js' -o -name '*.mjs' -o -name '*.json' -o -name '*.svg' -o -name '*.xml' -o -name '*.txt' -o -name '*.woff' -o -name '*.woff2' -o -name '*.ico' -o -name '*.map' \) \
+RUN find /app/dist -type f \( -name '*.html' -o -name '*.css' -o -name '*.js' -o -name '*.mjs' -o -name '*.json' -o -name '*.svg' -o -name '*.xml' -o -name '*.txt' -o -name '*.ico' -o -name '*.map' \) \
     -exec brotli -q 11 -k {} \; \
     -exec gzip -9 -k {} \; \
     -exec zstd --ultra -22 -k {} \;
