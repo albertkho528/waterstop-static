@@ -1,0 +1,41 @@
+[general]
+port = 8080
+root = "/public"
+page404 = "./404.html"
+log-level = "info"
+log-format = "json"
+
+compression = false
+compression-static = true
+
+cache-control-headers = false
+etag = true
+grace-period = 30
+health = true
+
+[advanced]
+
+[[advanced.headers]]
+source = "**/*"
+[advanced.headers.headers]
+X-Frame-Options = "SAMEORIGIN"
+X-Content-Type-Options = "nosniff"
+Referrer-Policy = "strict-origin-when-cross-origin"
+Strict-Transport-Security = "max-age=31536000"
+Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+Content-Security-Policy = "object-src 'none'; base-uri 'self'; frame-ancestors 'self'; form-action 'self'"
+
+[[advanced.headers]]
+source = "/_astro/**"
+[advanced.headers.headers]
+Cache-Control = "public, max-age=31536000, immutable"
+
+[[advanced.headers]]
+source = "**/*.{webp,png,jpg,jpeg,svg,ico}"
+[advanced.headers.headers]
+Cache-Control = "public, max-age=2592000"
+
+[[advanced.headers]]
+source = "**/*.{html,xml,json,txt}"
+[advanced.headers.headers]
+Cache-Control = "no-cache"
