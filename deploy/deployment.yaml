@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: waterstop-static
+  namespace: waterstop-static
+  labels:
+    app.kubernetes.io/name: waterstop-static
+    app.kubernetes.io/instance: waterstop-static-prod
+    app.kubernetes.io/part-of: waterstop
+    app.kubernetes.io/managed-by: flux
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: waterstop-static
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: waterstop-static
+        app.kubernetes.io/instance: waterstop-static-prod
+        app.kubernetes.io/part-of: waterstop
+        app.kubernetes.io/managed-by: flux
+    spec:
+      terminationGracePeriodSeconds: 60
+      containers:
+        - name: sws
+          image: registry.kudofools.dev/waterstop/waterstop-static:latest # {"$imagepolicy": "flux-system:waterstop-static"}
+          imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+            seccompProfile:
+              type: RuntimeDefault
+            runAsUser: 65532
+            runAsNonRoot: true
+            readOnlyRootFilesystem: true
+          ports:
+            - containerPort: 8080
+          resources:
+            limits:
+              memory: 128Mi
+              cpu: "200m"
+            requests:
+              memory: 32Mi
+              cpu: "50m"
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            periodSeconds: 5
+            timeoutSeconds: 10
+            failureThreshold: 24
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 20
+            timeoutSeconds: 10
+            failureThreshold: 5
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 10
+            failureThreshold: 3

@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: waterstop-static
+  namespace: waterstop-static
+  labels:
+    app.kubernetes.io/name: waterstop-static
+    app.kubernetes.io/instance: waterstop-static-prod
+    app.kubernetes.io/part-of: waterstop
+    app.kubernetes.io/managed-by: flux
+spec:
+  selector:
+    app.kubernetes.io/name: waterstop-static
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
