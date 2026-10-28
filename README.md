@@ -5,14 +5,14 @@ Hasil build berupa file statis (HTML/CSS/JS), jadi bisa di-host di mana saja.
 
 ## Menjalankan
 
-Butuh Node.js 22 atau lebih baru.
+Butuh Bun 1.4.4 (dipasang lewat Proto).
 
 ```bash
-npm install
-npm run dev       # http://localhost:4321, reload otomatis saat file diubah
-npm run build     # hasil di folder dist/ (/, /en/, /zh/)
-npx tsc --noEmit  # cek tipe, termasuk kelengkapan terjemahan
-npm run preview   # cek hasil build secara lokal
+bun install
+bun run dev       # http://localhost:4321
+bun run build     # hasil di folder dist/
+bunx tsc --noEmit
+bun run preview
 ```
 
 ## Yang paling sering diubah
@@ -96,14 +96,9 @@ pre-commit install
 
 ## Deploy
 
-**Paling mudah:** hubungkan repo ke Cloudflare Pages, Netlify atau Vercel.
-Build command `npm run build`, output folder `dist`.
+Push ke `main` → Woodpecker membangun image → Flux image automation memperbarui
+tag di `deploy/` → Flux menggulirkan pod.
 
-**Server sendiri dengan Docker:**
-
-```bash
-docker build -t waterstop-web .
-docker run -d -p 8080:80 --name waterstop waterstop-web
-```
-
-Lalu arahkan domain / reverse proxy ke port 8080.
+- Registry: `registry.kudofools.dev/waterstop/waterstop-static`
+- Namespace: `waterstop-static`
+- Domain: `https://waterstop.id`
