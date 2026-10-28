@@ -9,3 +9,6 @@ deploy
 .superpowers
 .pre-commit-config.yaml
 .commitlintrc.json
+eslint.config.mjs
+.prettierrc
+.prettierignore

@@ -1,31 +1,94 @@
 ---
-import { waLink, waExt } from "../data/store";
-import { LANGS, DICTS, homePath, type Content } from "../i18n";
-interface Props { c: Content }
+import { waExt, waLink } from "../data/store";
+import { type Content, DICTS, homePath, LANGS } from "../i18n";
+interface Props {
+  c: Content;
+}
 const { c } = Astro.props;
 const t = c.t;
-const links = [["#sistem", t.nav.system], ["#cari", t.nav.find], ["#produk", t.nav.products], ["#layanan", t.nav.services], ["#kontak", t.nav.contact]];
+const links = [
+  ["#sistem", t.nav.system],
+  ["#cari", t.nav.find],
+  ["#produk", t.nav.products],
+  ["#layanan", t.nav.services],
+  ["#kontak", t.nav.contact],
+];
 ---
-<a class="skip" href="#cari">{t.skip}</a>
+
+<a class="skip" href="#cari">
+  {t.skip}
+</a>
 <header class="top">
   <div class="wrap">
     <a class="brand" href="#top" aria-label={t.brandAria}>
-      <svg class="brand-mark" width="40" height="40" viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="22" fill="#0b5fb4"/><clipPath id="ws-drop"><path d="M50 12C50 12 24 44 24 61a26 26 0 0 0 52 0C76 44 50 12 50 12Z"/></clipPath><g clip-path="url(#ws-drop)"><rect width="100" height="49" fill="#8fdcf5"/><rect y="53" width="100" height="8" fill="#fff"/><rect y="65" width="100" height="8" fill="#fff"/><rect y="77" width="100" height="20" fill="#fff"/></g></svg>
-      <span><span class="brand-name">WATER<b>STOP</b></span><span class="brand-sub">PT JMA · BATAM</span></span>
+      <svg
+        class="brand-mark"
+        width="40"
+        height="40"
+        viewBox="0 0 100 100"
+        aria-hidden="true"
+      >
+        <rect width="100" height="100" rx="22" fill="#0b5fb4" />
+        <clipPath id="ws-drop">
+          <path d="M50 12C50 12 24 44 24 61a26 26 0 0 0 52 0C76 44 50 12 50 12Z" />
+        </clipPath>
+        <g clip-path="url(#ws-drop)">
+          <rect width="100" height="49" fill="#8fdcf5" />
+          <rect y="53" width="100" height="8" fill="#fff" />
+          <rect y="65" width="100" height="8" fill="#fff" />
+          <rect y="77" width="100" height="20" fill="#fff" />
+        </g>
+      </svg>
+      <span>
+        <span class="brand-name">
+          WATER<b>STOP</b>
+        </span>
+        <span class="brand-sub">PT JMA · BATAM</span>
+      </span>
     </a>
     <nav class="links" aria-label={t.nav.aria}>
-      {links.map(([href, label]) => <a href={href}>{label}</a>)}
-    </nav>
-    <div class="cure" aria-hidden="true"><span>{t.cure} <b id="cureTxt">0%</b></span><div class="cure-bar"><i id="cureBar"></i></div></div>
-    <nav class="langs" aria-label={t.nav.langAria}>
-      {LANGS.map((l) => (
-        <a href={homePath(l)} hreflang={DICTS[l].htmlLang} lang={DICTS[l].htmlLang} aria-current={l === c.lang ? "true" : undefined}>{DICTS[l].langName}</a>
+      {links.map(([href, label]) => (
+        <a href={href}>{label}</a>
       ))}
     </nav>
-    <a class="btn primary sm consult" href={waLink(t.wa.default)} {...waExt()}>{t.consult}</a>
-    <button class="btn sm menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="mnav" data-menu={t.menu} data-close={t.close}>{t.menu}</button>
+    <div class="cure" aria-hidden="true">
+      <span>
+        {t.cure} <b id="cureTxt">0%</b>
+      </span>
+      <div class="cure-bar">
+        <i id="cureBar"></i>
+      </div>
+    </div>
+    <nav class="langs" aria-label={t.nav.langAria}>
+      {LANGS.map((l) => (
+        <a
+          href={homePath(l)}
+          hreflang={DICTS[l].htmlLang}
+          lang={DICTS[l].htmlLang}
+          aria-current={l === c.lang ? "true" : undefined}
+        >
+          {DICTS[l].langName}
+        </a>
+      ))}
+    </nav>
+    <a class="btn primary sm consult" href={waLink(t.wa.default)} {...waExt()}>
+      {t.consult}
+    </a>
+    <button
+      class="btn sm menu-btn"
+      id="menuBtn"
+      type="button"
+      aria-expanded="false"
+      aria-controls="mnav"
+      data-menu={t.menu}
+      data-close={t.close}
+    >
+      {t.menu}
+    </button>
   </div>
   <div class="wrap mobile-nav" id="mnav" hidden>
-    {links.map(([href, label]) => <a href={href}>{label}</a>)}
+    {links.map(([href, label]) => (
+      <a href={href}>{label}</a>
+    ))}
   </div>
 </header>

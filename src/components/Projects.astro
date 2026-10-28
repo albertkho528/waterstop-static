@@ -1,33 +1,71 @@
 ---
-import SectionHead from "./SectionHead.astro";
 import { STORE } from "../data/store";
 import type { Content } from "../i18n";
-interface Props { c: Content }
+import SectionHead from "./SectionHead.astro";
+interface Props {
+  c: Content;
+}
 const { t } = Astro.props.c;
 const P = t.projects;
 // Foto proyek di /public/proyek/, urut sesuai teks `projects.tiles` di file bahasa. Kosong = kotak placeholder.
-const IMAGES: (string | undefined)[] = ["/proyek/balkon.webp", "/proyek/kamar-mandi.webp", "/proyek/dak.webp", "/proyek/bak.webp", "/proyek/floor-drain.webp"];
+const IMAGES: (string | undefined)[] = [
+  "/proyek/balkon.webp",
+  "/proyek/kamar-mandi.webp",
+  "/proyek/dak.webp",
+  "/proyek/bak.webp",
+  "/proyek/floor-drain.webp",
+];
 const gallery = STORE.instagram || STORE.facebook;
-const socials = [["Facebook", STORE.facebook], ["Instagram", STORE.instagram], ["TikTok", STORE.tiktok]].filter(([, u]) => u);
+const socials = [
+  ["Facebook", STORE.facebook],
+  ["Instagram", STORE.instagram],
+  ["TikTok", STORE.tiktok],
+].filter(([, u]) => u);
 ---
+
 <section class="sec" id="proyek">
   <div class="wrap">
-    <SectionHead layerWord={t.layer} layer="06" label={P.label} h2={P.h2} lead={P.lead} />
+    <SectionHead
+      layerWord={t.layer}
+      layer="06"
+      label={P.label}
+      h2={P.h2}
+      lead={P.lead}
+    />
     <div class="proj-grid">
       {P.tiles.map(([title, text], i) => {
         const img = IMAGES[i];
         return (
-          <a class="ph" href={gallery || "#kontak"} target={gallery ? "_blank" : undefined} rel={gallery ? "noopener" : undefined}>
-            {img
-              ? <img src={img} alt={`${title}: ${text} · Waterstop Batam`} loading="lazy" decoding="async" width="960" height="960" />
-              : <span class="slot">{P.slot}</span>}
-            <b>{title}</b><span>{text}</span>
+          <a
+            class="ph"
+            href={gallery || "#kontak"}
+            target={gallery ? "_blank" : undefined}
+            rel={gallery ? "noopener" : undefined}
+          >
+            {img ? (
+              <img
+                src={img}
+                alt={`${title}: ${text} · Waterstop Batam`}
+                loading="lazy"
+                decoding="async"
+                width="960"
+                height="960"
+              />
+            ) : (
+              <span class="slot">{P.slot}</span>
+            )}
+            <b>{title}</b>
+            <span>{text}</span>
           </a>
         );
       })}
     </div>
     <div class="socials">
-      {socials.map(([label, url]) => <a class="btn sm" href={url} target="_blank" rel="noopener">{label}</a>)}
+      {socials.map(([label, url]) => (
+        <a class="btn sm" href={url} target="_blank" rel="noopener">
+          {label}
+        </a>
+      ))}
     </div>
   </div>
 </section>

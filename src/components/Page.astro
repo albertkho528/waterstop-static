@@ -1,20 +1,22 @@
 ---
 // Seluruh halaman untuk satu bahasa. Dipakai oleh src/pages/index.astro, en/index.astro, zh/index.astro.
+import { content, type Lang } from "../i18n";
 import Base from "../layouts/Base.astro";
+import Audience from "./Audience.astro";
+import BuildStory from "./BuildStory.astro";
+import Contact from "./Contact.astro";
+import Faq from "./Faq.astro";
+import Finder from "./Finder.astro";
 import Header from "./Header.astro";
 import Hero from "./Hero.astro";
 import Problems from "./Problems.astro";
-import BuildStory from "./BuildStory.astro";
-import Finder from "./Finder.astro";
 import Products from "./Products.astro";
-import Services from "./Services.astro";
 import Projects from "./Projects.astro";
-import Audience from "./Audience.astro";
-import Faq from "./Faq.astro";
-import Contact from "./Contact.astro";
-import { content, type Lang } from "../i18n";
+import Services from "./Services.astro";
 
-interface Props { lang: Lang }
+interface Props {
+  lang: Lang;
+}
 const c = content(Astro.props.lang);
 // Data yang dibutuhkan skrip di browser (teks hasil pencarian, detail produk, label 3D).
 const clientData = {
@@ -23,11 +25,17 @@ const clientData = {
   areas: c.areas,
   steps: c.steps,
   t: {
-    htmlLang: c.t.htmlLang, layers: c.t.layers, wa: c.t.wa, finder: c.t.finder, products: c.t.products,
-    build: { status: c.t.build.status }, contact: { copy: c.t.contact.copy, copied: c.t.contact.copied },
+    htmlLang: c.t.htmlLang,
+    layers: c.t.layers,
+    wa: c.t.wa,
+    finder: c.t.finder,
+    products: c.t.products,
+    build: { status: c.t.build.status },
+    contact: { copy: c.t.contact.copy, copied: c.t.contact.copied },
   },
 };
 ---
+
 <Base lang={c.lang}>
   <Header c={c} />
   <main id="top">
@@ -42,7 +50,11 @@ const clientData = {
     <Faq c={c} />
   </main>
   <Contact c={c} />
-  <script type="application/json" id="i18n-data" set:html={JSON.stringify(clientData)} />
+  <script
+    type="application/json"
+    id="i18n-data"
+    set:html={JSON.stringify(clientData)}
+  />
 </Base>
 
 <script>

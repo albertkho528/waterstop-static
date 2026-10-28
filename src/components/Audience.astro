@@ -1,8 +1,10 @@
 ---
-import SectionHead from "./SectionHead.astro";
-import { waLink, waExt } from "../data/store";
+import { waExt, waLink } from "../data/store";
 import type { Content } from "../i18n";
-interface Props { c: Content }
+import SectionHead from "./SectionHead.astro";
+interface Props {
+  c: Content;
+}
 const { t } = Astro.props.c;
 const A = t.audience;
 const links = [
@@ -12,12 +14,25 @@ const links = [
   { href: waLink(t.wa.developer), ...waExt() },
 ];
 ---
+
 <section class="sec" id="siapa">
   <div class="wrap">
-    <SectionHead layerWord={t.layer} layer="07" label={A.label} h2={A.h2} lead={A.lead} />
+    <SectionHead
+      layerWord={t.layer}
+      layer="07"
+      label={A.label}
+      h2={A.h2}
+      lead={A.lead}
+    />
     <div class="aud tilt-wrap">
       {A.items.map(([title, text, cta], i) => (
-        <div class="tilt"><h3>{title}</h3><p>{text}</p><a class="go" {...links[i]}>{cta}</a></div>
+        <div class="tilt">
+          <h3>{title}</h3>
+          <p>{text}</p>
+          <a class="go" {...links[i]}>
+            {cta}
+          </a>
+        </div>
       ))}
     </div>
   </div>

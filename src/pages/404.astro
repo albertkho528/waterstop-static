@@ -5,6 +5,7 @@ const links = [
   { href: "/zh/", label: "中文" },
 ];
 ---
+
 <!doctype html>
 <html lang="id">
   <head>
@@ -13,24 +14,80 @@ const links = [
     <meta name="robots" content="noindex" />
     <title>Halaman tidak ditemukan — Waterstop</title>
     <style>
-      :root { color-scheme: dark; }
-      body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: #08090b; color: #e8eaec; font: 400 16px/1.6 Archivo, Arial, sans-serif; }
-      main { max-width: 560px; padding: 32px; text-align: center; }
-      img { width: 64px; height: 64px; margin-bottom: 24px; }
-      h1 { margin: 0 0 12px; font: 900 clamp(40px, 10vw, 72px)/0.9 "Big Shoulders Display", Impact, sans-serif; text-transform: uppercase; }
-      p { margin: 0 0 28px; color: #8f97a0; }
-      nav { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-      a { padding: 12px 18px; border: 1px solid #262b32; color: #e8eaec; text-decoration: none; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; font-size: 13px; }
-      a:hover { border-color: #4a9fec; color: #8fdcf5; }
+      :root {
+        color-scheme: dark;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background: #08090b;
+        color: #e8eaec;
+        font:
+          400 16px/1.6 Archivo,
+          Arial,
+          sans-serif;
+      }
+      main {
+        max-width: 560px;
+        padding: 32px;
+        text-align: center;
+      }
+      img {
+        width: 64px;
+        height: 64px;
+        margin-bottom: 24px;
+      }
+      h1 {
+        margin: 0 0 12px;
+        font:
+          900 clamp(40px, 10vw, 72px)/0.9 "Big Shoulders Display",
+          Impact,
+          sans-serif;
+        text-transform: uppercase;
+      }
+      p {
+        margin: 0 0 28px;
+        color: #8f97a0;
+      }
+      nav {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      a {
+        padding: 12px 18px;
+        border: 1px solid #262b32;
+        color: #e8eaec;
+        text-decoration: none;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        font-size: 13px;
+      }
+      a:hover {
+        border-color: #4a9fec;
+        color: #8fdcf5;
+      }
     </style>
   </head>
   <body>
     <main>
       <img src="/brand/waterstop-mark.svg" alt="" />
       <h1>404</h1>
-      <p>Halaman yang Anda cari tidak ditemukan.<br />The page you are looking for was not found.<br />找不到您要访问的页面。</p>
+      <p>
+        Halaman yang Anda cari tidak ditemukan.
+        <br />
+        The page you are looking for was not found.
+        <br />
+        找不到您要访问的页面。
+      </p>
       <nav>
-        {links.map((link) => <a href={link.href}>{link.label}</a>)}
+        {links.map((link) => (
+          <a href={link.href}>{link.label}</a>
+        ))}
       </nav>
     </main>
   </body>

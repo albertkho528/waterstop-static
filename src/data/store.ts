@@ -5,14 +5,17 @@ export const STORE = {
   company: "PT JMA",
   wa: "6285837512484", // format internasional tanpa + dan spasi
   phoneDisplay: "+62 858-3751-2484",
-  address: "Ruko Accelence Blk. A No. 12, Teluk Tering, Batam Centre, Batam 29432",
+  address:
+    "Ruko Accelence Blk. A No. 12, Teluk Tering, Batam Centre, Batam 29432",
   street: "Ruko Accelence Blk. A No. 12, Teluk Tering",
   locality: "Batam",
   region: "Kepulauan Riau",
   postalCode: "29432",
   maps:
     "https://www.google.com/maps/search/?api=1&query=" +
-    encodeURIComponent("Toko Waterstop PT JMA, Ruko Accelence Blk A No 12, Teluk Tering, Batam Centre"),
+    encodeURIComponent(
+      "Toko Waterstop PT JMA, Ruko Accelence Blk A No 12, Teluk Tering, Batam Centre",
+    ),
   facebook: "https://www.facebook.com/jma.batam",
   instagram: "", // isi URL lengkap bila ada
   tiktok: "",
@@ -20,8 +23,13 @@ export const STORE = {
 
 export function waLink(text?: string): string {
   if (!STORE.wa) return "#kontak";
-  return "https://wa.me/" + STORE.wa + (text ? "?text=" + encodeURIComponent(text) : "");
+  return (
+    "https://wa.me/" +
+    STORE.wa +
+    (text ? "?text=" + encodeURIComponent(text) : "")
+  );
 }
 
 /** Atribut untuk link WhatsApp: buka di tab baru bila nomor terisi. */
-export const waExt = () => (STORE.wa ? { target: "_blank", rel: "noopener" } : {});
+export const waExt = () =>
+  STORE.wa ? { target: "_blank", rel: "noopener" } : {};

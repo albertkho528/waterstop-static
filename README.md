@@ -12,22 +12,24 @@ bun install
 bun run dev       # http://localhost:4321
 bun run build     # hasil di folder dist/
 bun run typecheck
+bun run lint
+bun run format
 bun run preview
 ```
 
 ## Yang paling sering diubah
 
-| Ingin mengubah | File |
-| --- | --- |
-| Nomor WA, alamat, link Facebook/Instagram/TikTok | `src/data/store.ts` |
-| Semua teks halaman (judul, deskripsi, FAQ, pesan WhatsApp, jam buka) | `src/i18n/id.ts`, `en.ts`, `zh.ts` |
-| Daftar produk (merek, nama, bentuk kemasan 3D) | `src/data/products.ts` + deskripsinya di `productText` tiap file bahasa |
-| Foto produk asli di rak 3D | PNG berlatar transparan di `public/produk/`, lalu isi `photo` produk itu di `src/data/products.ts` |
-| Logo | `public/brand/` (SVG + PNG), ikon di header ada di `src/components/Header.astro`, favicon di `public/favicon.svg` |
-| Area bocor di pencari solusi | `src/data/areas.ts` + teksnya di `areas` tiap file bahasa |
-| Foto proyek & toko | `public/proyek/` (WebP); urutan di `IMAGES` pada `src/components/Projects.astro`, teks di `projects.tiles` tiap file bahasa |
-| Warna, font, ukuran | variabel di bagian atas `src/styles/global.css` |
-| Domain (untuk canonical & SEO) | `site` di `astro.config.mjs` |
+| Ingin mengubah                                                       | File                                                                                                                        |
+| -------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| Nomor WA, alamat, link Facebook/Instagram/TikTok                     | `src/data/store.ts`                                                                                                         |
+| Semua teks halaman (judul, deskripsi, FAQ, pesan WhatsApp, jam buka) | `src/i18n/id.ts`, `en.ts`, `zh.ts`                                                                                          |
+| Daftar produk (merek, nama, bentuk kemasan 3D)                       | `src/data/products.ts` + deskripsinya di `productText` tiap file bahasa                                                     |
+| Foto produk asli di rak 3D                                           | PNG berlatar transparan di `public/produk/`, lalu isi `photo` produk itu di `src/data/products.ts`                          |
+| Logo                                                                 | `public/brand/` (SVG + PNG), ikon di header ada di `src/components/Header.astro`, favicon di `public/favicon.svg`           |
+| Area bocor di pencari solusi                                         | `src/data/areas.ts` + teksnya di `areas` tiap file bahasa                                                                   |
+| Foto proyek & toko                                                   | `public/proyek/` (WebP); urutan di `IMAGES` pada `src/components/Projects.astro`, teks di `projects.tiles` tiap file bahasa |
+| Warna, font, ukuran                                                  | variabel di bagian atas `src/styles/global.css`                                                                             |
+| Domain (untuk canonical & SEO)                                       | `site` di `astro.config.mjs`                                                                                                |
 
 Model 3D tiap produk mengikuti bentuk kemasan aslinya (`shape` di `products.ts`): `kit` (sak + jeriken
 untuk produk 2 komponen), `sack`, `pail`, `roll`, `bottle`. Label pada model digambar sendiri dari nama produk,
@@ -38,11 +40,11 @@ Produk baru otomatis muncul di rak 3D, daftar produk, dan bisa dipakai di pencar
 
 ## Tiga bahasa
 
-| Bahasa | Alamat | File teks |
-| --- | --- | --- |
-| Indonesia (utama) | `/` | `src/i18n/id.ts` |
-| English | `/en/` | `src/i18n/en.ts` |
-| 中文 (简体) | `/zh/` | `src/i18n/zh.ts` |
+| Bahasa            | Alamat | File teks        |
+| ----------------- | ------ | ---------------- |
+| Indonesia (utama) | `/`    | `src/i18n/id.ts` |
+| English           | `/en/` | `src/i18n/en.ts` |
+| 中文 (简体)       | `/zh/` | `src/i18n/zh.ts` |
 
 - Ketiga file bahasa punya kunci yang sama persis (dicek oleh TypeScript lewat `src/i18n/types.ts`).
   Kalau menambah teks di satu bahasa, tambahkan juga di dua lainnya; editor akan menandai yang terlewat.
@@ -83,6 +85,7 @@ src/
 ```
 
 Catatan teknis:
+
 - Font di-host sendiri lewat `@fontsource` (tidak bergantung Google Fonts).
 - 3D hanya menggambar saat terlihat di layar, dan berhenti total bila pengguna memilih
   "kurangi animasi" di perangkatnya. Tanpa WebGL, halaman tetap lengkap dalam versi datar.
@@ -93,6 +96,8 @@ Catatan teknis:
 ```bash
 pre-commit install
 ```
+
+Hook menjalankan format, lint, dan typecheck sebelum commit.
 
 ## Deploy
 

@@ -1,31 +1,54 @@
 ---
-import SectionHead from "./SectionHead.astro";
-import { pad2 } from "../lib/templates";
 import type { Content } from "../i18n";
-interface Props { c: Content }
+import { pad2 } from "../lib/templates";
+import SectionHead from "./SectionHead.astro";
+interface Props {
+  c: Content;
+}
 const { t, steps } = Astro.props.c;
 const B = t.build;
 const n = steps.length;
 ---
+
 <section class="sec" id="sistem">
   <div class="wrap">
-    <SectionHead layerWord={t.layer} layer="02" label={B.label} h2={B.h2} lead={B.lead} />
+    <SectionHead
+      layerWord={t.layer}
+      layer="02"
+      label={B.label}
+      h2={B.h2}
+      lead={B.lead}
+    />
     <div class="build-grid">
       <div class="build-sticky">
         <div class="vp" id="buildStage" aria-label={B.stageAria}>
           <canvas id="buildGL" aria-hidden="true"></canvas>
           <div class="hud tl">{B.hudTl}</div>
           <div class="build-hud">
-            <span class="num" id="buildNum">01</span>
-            <span class="name"><span id="buildName">{steps[0].title}</span><small id="buildStatus">{B.status}: <b>{steps[0].status}</b></small></span>
-            <div class="bar"><i id="buildBar"></i></div>
+            <span class="num" id="buildNum">
+              01
+            </span>
+            <span class="name">
+              <span id="buildName">{steps[0].title}</span>
+              <small id="buildStatus">
+                {B.status}: <b>{steps[0].status}</b>
+              </small>
+            </span>
+            <div class="bar">
+              <i id="buildBar"></i>
+            </div>
           </div>
         </div>
       </div>
       <ol class="build-steps" id="buildSteps">
         {steps.map((s, i) => (
           <li class={i === 0 ? "on" : undefined}>
-            <span class="n">{pad2(i + 1)} / {pad2(n)}</span><h3>{s.title}</h3><p>{s.text}</p><span class="meta">{s.meta}</span>
+            <span class="n">
+              {pad2(i + 1)} / {pad2(n)}
+            </span>
+            <h3>{s.title}</h3>
+            <p>{s.text}</p>
+            <span class="meta">{s.meta}</span>
           </li>
         ))}
       </ol>

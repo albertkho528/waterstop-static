@@ -1,0 +1,5 @@
+bun.lock
+dist
+.superpowers
+.astro
+node_modules

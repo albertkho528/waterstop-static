@@ -7,3 +7,11 @@ libc = "gnu"
 spec = "1.4.4"
 version = "1.4.4"
 checksum = "sha256:bf8ccbfb2b0b80159e0f9a6d15c55317add8077534dbc6130a3edb52fccb395c"
+
+[[tools.node]]
+os = "linux"
+arch = "x64"
+libc = "gnu"
+spec = "26.13.0"
+version = "26.13.0"
+checksum = "sha256:d28a96af6c38596f6d9d97c0ee531c13d238d757742387d1928de822d959e997"

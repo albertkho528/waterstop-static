@@ -1,16 +1,33 @@
 ---
-import SectionHead from "./SectionHead.astro";
 import type { Content } from "../i18n";
-interface Props { c: Content }
+import SectionHead from "./SectionHead.astro";
+interface Props {
+  c: Content;
+}
 const { t } = Astro.props.c;
 const F = t.faq;
-const ld = { "@context": "https://schema.org", "@type": "FAQPage", inLanguage: t.htmlLang, mainEntity: F.items.map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })) };
+const ld = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  inLanguage: t.htmlLang,
+  mainEntity: F.items.map(([q, a]) => ({
+    "@type": "Question",
+    name: q,
+    acceptedAnswer: { "@type": "Answer", text: a },
+  })),
+};
 ---
+
 <section class="sec" id="faq">
   <div class="wrap">
     <SectionHead layerWord={t.layer} layer="08" label={F.label} h2={F.h2} />
     <div class="faq">
-      {F.items.map(([q, a]) => <details><summary>{q}</summary><p>{a}</p></details>)}
+      {F.items.map(([q, a]) => (
+        <details>
+          <summary>{q}</summary>
+          <p>{a}</p>
+        </details>
+      ))}
     </div>
   </div>
   <script type="application/ld+json" set:html={JSON.stringify(ld)} />

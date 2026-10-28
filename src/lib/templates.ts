@@ -1,17 +1,25 @@
 // Template HTML dipakai di server (render awal) dan di browser (saat pengguna memilih).
-import type { Dict, LArea, LProduct } from "../i18n";
-import { fill } from "../i18n";
 import { BADGE, DOT } from "../data/products";
 import { STORE, waLink } from "../data/store";
+import type { Dict, LArea, LProduct } from "../i18n";
+import { fill } from "../i18n";
 
 export const esc = (s: string) =>
-  String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c] as string);
+  String(s).replace(
+    /[&<>"]/g,
+    (c) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c] as string,
+  );
 
-const waAttrs = (text: string) => `href="${waLink(text)}"${STORE.wa ? ' target="_blank" rel="noopener"' : ""}`;
+const waAttrs = (text: string) =>
+  `href="${waLink(text)}"${STORE.wa ? ' target="_blank" rel="noopener"' : ""}`;
 
 export function areaResult(a: LArea, t: Dict, products: LProduct[]): string {
   const tags = (["positif", "negatif", "detail"] as const)
-    .map((k) => `<span class="chip ${a.pressure.includes(k) ? "on" : ""}">${esc(t.finder.pressure[k])}</span>`)
+    .map(
+      (k) =>
+        `<span class="chip ${a.pressure.includes(k) ? "on" : ""}">${esc(t.finder.pressure[k])}</span>`,
+    )
     .join("");
   const sys = a.sys
     .map(([n, role]) => {
