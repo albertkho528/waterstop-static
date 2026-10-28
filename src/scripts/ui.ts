@@ -9,7 +9,7 @@ const t = data.t as unknown as import("../i18n").Dict;
 {
   const mb = $<HTMLButtonElement>("#menuBtn"), mn = $("#mnav");
   const set = (open: boolean) => { mn.hidden = !open; mb.setAttribute("aria-expanded", String(open)); mb.textContent = (open ? mb.dataset.close : mb.dataset.menu) || ""; };
-  mb.addEventListener("click", () => set(mn.hidden));
+  mb.addEventListener("click", () => set(Boolean(mn.hidden)));
   mn.addEventListener("click", (e) => { if ((e.target as Element).tagName === "A") set(false); });
 }
 

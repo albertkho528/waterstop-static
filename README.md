@@ -11,7 +11,7 @@ Butuh Bun 1.4.4 (dipasang lewat Proto).
 bun install
 bun run dev       # http://localhost:4321
 bun run build     # hasil di folder dist/
-bunx tsc --noEmit
+bun run typecheck
 bun run preview
 ```
 
