@@ -27,10 +27,11 @@ spec:
         app.kubernetes.io/managed-by: flux
     spec:
       terminationGracePeriodSeconds: 60
+      automountServiceAccountToken: false
       containers:
         - name: sws
           image: registry.kudofools.dev/waterstop/waterstop-static:build-000001-sha-d20cd625 # {"$imagepolicy": "flux-system:waterstop-static"}
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
