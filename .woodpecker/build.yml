@@ -1,0 +1,64 @@
+when:
+  event: [push, manual]
+  branch: main
+  path:
+    include:
+      - deploy/*
+      - src/**/*
+      - public/**/*
+      - package.json
+      - bun.lock
+      - astro.config.mjs
+      - tsconfig.json
+      - config.toml
+      - Dockerfile
+      - .dockerignore
+      - .prototools
+      - .protolock
+      - .woodpecker/*
+
+variables:
+  - &alpine "alpine:3.24.2"
+  - &buildkit "moby/buildkit:v0.33.0"
+
+clone:
+  git:
+    image: woodpeckerci/plugin-git:2.10.1
+    settings:
+      depth: 1
+      lfs: false
+
+steps:
+  build-and-push:
+    image: *buildkit
+    environment:
+      REGISTRY_USERNAME:
+        from_secret: registry_username
+      REGISTRY_PASSWORD:
+        from_secret: registry_password
+    commands:
+      - mkdir -p ~/.docker
+      - echo "{\"auths\":{\"registry.kudofools.dev\":{\"username\":\"$${REGISTRY_USERNAME}\",\"password\":\"$${REGISTRY_PASSWORD}\"}}}" > ~/.docker/config.json
+      - TAG="build-$(printf '%06d' ${CI_PIPELINE_NUMBER})-sha-${CI_COMMIT_SHA:0:8}"
+      - |
+        echo "waiting for buildkitd..."
+        timeout 30 sh -c 'until nc -z buildkitd-service.buildkitd.svc 1234 2>/dev/null; do echo "waiting..."; sleep 2; done'
+        echo "buildkitd is ready"
+      - buildctl --addr tcp://buildkitd-service.buildkitd.svc:1234 build
+        --frontend dockerfile.v0
+        --local context=.
+        --local dockerfile=.
+        --output type=image,name=registry.kudofools.dev/waterstop/waterstop-static:latest,push=true
+        --output type=image,name=registry.kudofools.dev/waterstop/waterstop-static:$TAG,push=true
+
+  verify:
+    image: *alpine
+    depends_on: [build-and-push]
+    commands:
+      - apk add --no-cache curl
+      - TAG="build-$(printf '%06d' ${CI_PIPELINE_NUMBER})-sha-${CI_COMMIT_SHA:0:8}"
+      - |
+        STATUS=$(curl -sS --connect-timeout 5 --max-time 30 --retry 5 --retry-connrefused --retry-delay 2 -o /dev/null -w "%{http_code}" "https://registry.kudofools.dev/v2/waterstop/waterstop-static/manifests/$TAG" -H "Accept: application/vnd.oci.image.manifest.v1+json")
+        echo "HTTP status = $STATUS"
+        if [ "$STATUS" != "200" ]; then echo "FAIL"; exit 1; fi
+        echo "OK"
