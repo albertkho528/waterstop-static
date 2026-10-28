@@ -8,7 +8,7 @@ COPY --link . .
 RUN --mount=type=cache,id=vite,target=/app/node_modules/.vite \
     bun run build
 
-FROM alpine:3.24 AS compress
+FROM alpine:3.24.2 AS compress
 WORKDIR /app
 RUN apk add --no-cache brotli zstd
 COPY --link --from=builder /app/dist /app/dist

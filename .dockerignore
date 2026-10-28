@@ -6,3 +6,6 @@ dist
 *.md
 deploy
 .woodpecker
+.superpowers
+.pre-commit-config.yaml
+.commitlintrc.json
