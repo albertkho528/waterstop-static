@@ -88,6 +88,12 @@ Catatan teknis:
   "kurangi animasi" di perangkatnya. Tanpa WebGL, halaman tetap lengkap dalam versi datar.
 - Bentuk kemasan di rak 3D hanya ilustrasi; labelnya digambar dari data produk.
 
+## Pre-commit
+
+```bash
+pre-commit install
+```
+
 ## Deploy
 
 **Paling mudah:** hubungkan repo ke Cloudflare Pages, Netlify atau Vercel.
