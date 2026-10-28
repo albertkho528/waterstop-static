@@ -29,7 +29,7 @@ spec:
       terminationGracePeriodSeconds: 60
       containers:
         - name: sws
-          image: registry.kudofools.dev/waterstop/waterstop-static:latest # {"$imagepolicy": "flux-system:waterstop-static"}
+          image: registry.kudofools.dev/waterstop/waterstop-static:build-000001-sha-d20cd625 # {"$imagepolicy": "flux-system:waterstop-static"}
           imagePullPolicy: Always
           securityContext:
             allowPrivilegeEscalation: false
