@@ -1,4 +1,4 @@
-// Template HTML dipakai di server (render awal) dan di browser (saat pengguna memilih).
+// HTML templates used on the server (initial render) and in the browser (when the user makes a choice).
 import { BADGE, DOT } from "../data/products";
 import { STORE, waLink } from "../data/store";
 import type { Dict, LArea, LProduct } from "../i18n";

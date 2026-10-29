@@ -1,4 +1,4 @@
-// Hero: penampang dak terurai, merakit saat di-scroll, hujan memercik di top coat.
+// Hero: exploded roof slab cross-section that assembles on scroll, rain splashing on the top coat.
 import { esc } from "../../lib/templates";
 import { $, clamp, data, lerp, REDUCE } from "../state";
 import { buildStack, createStage, glowFloor, makeRain } from "./core";
@@ -53,14 +53,14 @@ export function initHero() {
     },
   });
 
-  // model digeser ke kiri supaya kolom label di kanan tidak menimpa lapisan
+  // model shifted left so the label column on the right does not cover the layers
   S.fit = (a) => {
     const k = (a < 1.15 ? 1.2 / a : 1.05) * 1.08;
     base = [5.8 * k, 4.2 * k, 7.2 * k];
     S.camera.setViewOffset(S.w, S.h, S.w * (a < 1 ? 0.11 : 0.07), 0, S.w, S.h);
   };
   S.frame = (dt) => {
-    // lapisan tetap terurai selama viewport terlihat penuh, merakit saat digulir melewati header
+    // layers stay exploded while the viewport is fully visible, and assemble when scrolled past the header
     const r = el.getBoundingClientRect();
     const target = 1 - clamp((90 - r.top) / (r.height * 0.75));
     spread = lerp(spread, target, Math.min(1, dt * 5));
@@ -74,7 +74,7 @@ export function initHero() {
     S.camera.lookAt(0, 0.45, 0);
     rain.update(dt);
   };
-  // label rata dalam satu kolom, tidak saling tumpuk, tidak keluar viewport
+  // labels aligned in one column, not overlapping, not outside the viewport
   S.after = () => {
     let maxX = -1e9;
     const ys: { i: number; y: number }[] = [];

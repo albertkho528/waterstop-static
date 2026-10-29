@@ -1,4 +1,4 @@
-// Simulasi pemasangan: retak ditambal, primer, mesh, membran, lalu uji genang — mengikuti scroll.
+// Installation simulation: crack patched, primer, mesh, membrane, then flood test — following the scroll.
 import { $, clamp, lerp, REDUCE, state } from "../state";
 import { buildStack, createStage, ctex, glowFloor, THREE } from "./core";
 
@@ -13,7 +13,7 @@ export function initBuild() {
   const st = buildStack(["beton", "primer", "mesh", "membran"]);
   S.scene.add(st.group, glowFloor(9, -1.05));
 
-  // retak di permukaan beton
+  // crack on the concrete surface
   const crackMat = new THREE.MeshBasicMaterial({
     transparent: true,
     depthWrite: false,
@@ -46,7 +46,7 @@ export function initBuild() {
   crack.rotation.x = -Math.PI / 2;
   st.group.add(crack);
 
-  // bidang pemindai survei
+  // survey scan plane
   const scan = new THREE.Mesh(
     new THREE.PlaneGeometry(st.W + 0.5, st.D + 0.5),
     new THREE.MeshBasicMaterial({
@@ -66,7 +66,7 @@ export function initBuild() {
   );
   scan.add(scanEdge);
 
-  // air uji genang
+  // flood-test water
   const water = new THREE.Mesh(
     new THREE.BoxGeometry(st.W - 0.04, 1, st.D - 0.04),
     new THREE.MeshStandardMaterial({

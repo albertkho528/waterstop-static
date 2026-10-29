@@ -1,4 +1,4 @@
-// Bentuk kamus terjemahan. Ketiga bahasa (id, en, zh) wajib mengisi semua kunci ini.
+// Shape of the translation dictionary. All three languages (id, en, zh) must fill in every key.
 export type Lang = "id" | "en" | "zh";
 
 export interface ProductText {
@@ -28,7 +28,7 @@ type SecHead = { label: string; h2: [string, string]; lead?: string };
 
 export interface Dict {
   htmlLang: string;
-  langName: string; // label di pemilih bahasa
+  langName: string; // label in the language picker
   meta: { title: string; desc: string; ogAlt: string };
   nav: {
     system: string;

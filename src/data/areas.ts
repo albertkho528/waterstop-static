@@ -1,6 +1,6 @@
-// Area bocor di pencari solusi (bagian yang sama di semua bahasa).
-// Nama, penjelasan, peran produk dan langkah kerja ada di src/i18n/{id,en,zh}.ts → `areas`.
-// `sys` = nama produk persis seperti di products.ts; urutannya sama dengan `roles` di kamus.
+// Leak areas in the solution finder (the same part in every language).
+// Names, explanations, product roles and work steps are in src/i18n/{id,en,zh}.ts → `areas`.
+// `sys` = product names exactly as in products.ts; their order matches `roles` in the dictionary.
 export type AreaId = "dak" | "km" | "kolam" | "tandon" | "basement" | "retak";
 export type Pressure = "positif" | "negatif" | "detail";
 

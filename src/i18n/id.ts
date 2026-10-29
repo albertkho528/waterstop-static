@@ -1,6 +1,6 @@
 import type { Dict } from "./types";
 
-// Bahasa Indonesia — bahasa utama situs (alamat "/").
+// Indonesian — the site's main language (address "/").
 export const id: Dict = {
   htmlLang: "id",
   langName: "ID",

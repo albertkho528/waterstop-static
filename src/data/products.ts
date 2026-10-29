@@ -1,20 +1,20 @@
-// Daftar produk (bagian yang sama di semua bahasa).
-// Teks deskripsi tiap produk ada di src/i18n/{id,en,zh}.ts → `productText`, dengan kunci = nama produk.
+// Product list (the same part in every language).
+// Description text for each product is in src/i18n/{id,en,zh}.ts → `productText`, keyed by product name.
 export type Brand = "Mapei" | "Bondall";
-// Bentuk kemasan pada model 3D, mengikuti kemasan asli dari pabrik:
-// kit = sak bubuk + jeriken cairan (produk 2 komponen), sack = sak, pail = pail/drum, roll = gulungan, bottle = botol
+// Package shape for the 3D model, following the real factory packaging:
+// kit = powder sack + liquid jerrycan (two-component product), sack = sack, pail = pail/drum, roll = roll, bottle = bottle
 export type Shape = "kit" | "sack" | "pail" | "roll" | "bottle";
 
 export interface Product {
   brand: Brand;
   shape: Shape;
   name: string;
-  /** Teks berat/volume yang tercetak di label model 3D, mis. { sack: "24 kg", can: "8 kg" }. */
+  /** Weight/volume text printed on the 3D model label, e.g. { sack: "24 kg", can: "8 kg" }. */
   pack?: { sack?: string; can?: string; pail?: string; bottle?: string };
   /**
-   * Foto produk asli (opsional). Taruh file PNG berlatar transparan di public/produk/,
-   * lalu isi path-nya, mis. "/produk/mapelastic.png". Bila diisi, rak 3D dan panel detail
-   * memakai foto ini menggantikan model kemasan.
+   * Real product photo (optional). Put a PNG with a transparent background in public/produk/,
+   * then fill in its path, e.g. "/produk/mapelastic.png". When set, the 3D shelf and the detail panel
+   * use this photo instead of the package model.
    */
   photo?: string;
 }

@@ -1,4 +1,4 @@
-// Titik masuk: UI biasa langsung jalan; tiap adegan 3D dimuat saat hampir terlihat (hemat data di HP).
+// Entry point: the regular UI runs immediately; each 3D scene loads when it is almost visible (saves data on phones).
 import "./ui";
 
 const lazy: [string, () => Promise<void>][] = [
@@ -18,7 +18,7 @@ function webglOK() {
 }
 
 if (!webglOK()) {
-  // tanpa 3D: tampilkan versi datar, konten tetap lengkap
+  // no 3D: show the flat version, content stays complete
   (["#houseStage", "#pailStage"] as const).forEach(
     (s) => ((document.querySelector(s) as HTMLElement).hidden = true),
   );

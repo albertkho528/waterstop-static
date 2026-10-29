@@ -1,5 +1,5 @@
 ---
-// Seluruh halaman untuk satu bahasa. Dipakai oleh src/pages/index.astro, en/index.astro, zh/index.astro.
+// The whole page for one language. Used by src/pages/index.astro, en/index.astro, zh/index.astro.
 import { content, type Lang } from "../i18n";
 import Base from "../layouts/Base.astro";
 import Audience from "./Audience.astro";
@@ -18,7 +18,7 @@ interface Props {
   lang: Lang;
 }
 const c = content(Astro.props.lang);
-// Data yang dibutuhkan skrip di browser (teks hasil pencarian, detail produk, label 3D).
+// Data needed by the browser script (search result text, product details, 3D labels).
 const clientData = {
   lang: c.lang,
   products: c.products,

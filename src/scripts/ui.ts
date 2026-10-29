@@ -1,4 +1,4 @@
-// Interaksi non-3D: menu, meter curing, kartu miring, salin, pencari solusi, pilihan produk, tahap pemasangan.
+// Non-3D interactions: menu, curing meter, tilt cards, copy, solution finder, product selection, installation stages.
 import { areaResult, pad2, productDetail } from "../lib/templates";
 import { $, clamp, data, hooks, REDUCE, state } from "./state";
 
@@ -7,7 +7,6 @@ const PRODUCTS = data.products,
   BUILD_STEPS = data.steps;
 const t = data.t as unknown as import("../i18n").Dict;
 
-/* menu mobile */
 {
   const mb = $<HTMLButtonElement>("#menuBtn"),
     mn = $("#mnav");
@@ -22,7 +21,6 @@ const t = data.t as unknown as import("../i18n").Dict;
   });
 }
 
-/* meter curing = progres scroll */
 {
   const t = $("#cureTxt"),
     bar = $("#cureBar");
@@ -36,7 +34,6 @@ const t = data.t as unknown as import("../i18n").Dict;
   f();
 }
 
-/* kartu miring 3D (hanya mouse) */
 if (!REDUCE && matchMedia("(hover:hover) and (pointer:fine)").matches) {
   document.querySelectorAll(".tilt-wrap").forEach((g) => {
     g.addEventListener("pointermove", (e: Event) => {
@@ -56,7 +53,6 @@ if (!REDUCE && matchMedia("(hover:hover) and (pointer:fine)").matches) {
   });
 }
 
-/* tombol salin */
 document.querySelectorAll<HTMLButtonElement>(".copy").forEach((b) =>
   b.addEventListener("click", () => {
     const el = document.getElementById(b.dataset.copy!)!;
@@ -79,7 +75,6 @@ document.querySelectorAll<HTMLButtonElement>(".copy").forEach((b) =>
   }),
 );
 
-/* pilihan produk */
 const pIndex = $("#pIndex"),
   pDetail = $("#pDetail");
 export function selectProduct(i: number) {
@@ -101,7 +96,6 @@ pIndex.addEventListener("click", (e) => {
 $("#pPrev").addEventListener("click", () => selectProduct(state.pSel - 1));
 $("#pNext").addEventListener("click", () => selectProduct(state.pSel + 1));
 
-/* pencari solusi */
 const areasEl = $("#areas"),
   resEl = $("#result");
 export function showArea(id: string, fly = true) {
@@ -133,7 +127,6 @@ resEl.addEventListener("click", (e) => {
   $("#produk").scrollIntoView({ behavior: REDUCE ? "auto" : "smooth" });
 });
 
-/* tahap pemasangan mengikuti scroll */
 {
   const list = $("#buildSteps");
   const items = [...list.children] as HTMLElement[];

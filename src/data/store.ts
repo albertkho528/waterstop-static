@@ -1,9 +1,9 @@
-// Data toko — ubah di sini, semua bahasa ikut berubah.
-// Jam buka dan teks rating per bahasa ada di src/i18n/{id,en,zh}.ts → contact.hoursValue / hero.rating.
+// Store data — edit here, every language follows.
+// Opening hours and rating text per language are in src/i18n/{id,en,zh}.ts → contact.hoursValue / hero.rating.
 export const STORE = {
   name: "Toko Waterstop",
   company: "PT JMA",
-  wa: "6285837512484", // format internasional tanpa + dan spasi
+  wa: "6285837512484", // international format, no + or spaces
   phoneDisplay: "+62 858-3751-2484",
   address:
     "Ruko Accelence Blk. A No. 12, Teluk Tering, Batam Centre, Batam 29432",
@@ -17,7 +17,7 @@ export const STORE = {
       "Toko Waterstop PT JMA, Ruko Accelence Blk A No 12, Teluk Tering, Batam Centre",
     ),
   facebook: "https://www.facebook.com/jma.batam",
-  instagram: "", // isi URL lengkap bila ada
+  instagram: "", // fill in the full URL if available
   tiktok: "",
 };
 
@@ -30,6 +30,6 @@ export function waLink(text?: string): string {
   );
 }
 
-/** Atribut untuk link WhatsApp: buka di tab baru bila nomor terisi. */
+/** Attributes for the WhatsApp link: open in a new tab when a number is set. */
 export const waExt = () =>
   STORE.wa ? { target: "_blank", rel: "noopener" } : {};

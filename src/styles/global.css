@@ -1488,7 +1488,7 @@ footer.foot .wrap {
   max-width: 42ch;
 }
 
-/* ---------- pemilih bahasa ---------- */
+/* ---------- language picker ---------- */
 .langs {
   display: flex;
   border: 1px solid var(--line);
@@ -1538,7 +1538,7 @@ footer.foot .wrap {
   }
 }
 
-/* ---------- Mandarin: huruf CJK dari Noto Sans SC, spasi baris lebih longgar ---------- */
+/* ---------- Mandarin: CJK glyphs from Noto Sans SC, looser line spacing ---------- */
 html[lang^="zh"] {
   --display:
     "Big Shoulders Display", "Noto Sans SC", "PingFang SC", "Microsoft YaHei",
@@ -1573,7 +1573,7 @@ html[lang^="zh"] .lbl {
   letter-spacing: 0.06em;
 }
 
-/* header di layar menengah: jangan sampai teks menu turun baris */
+/* header on medium screens: keep menu text from wrapping */
 nav.links a,
 .btn,
 .langs a {
@@ -1597,7 +1597,7 @@ nav.links a,
   }
 }
 
-/* foto produk asli (bila diisi di products.ts) */
+/* real product photo (when set in products.ts) */
 .pphoto {
   display: block;
   max-width: 220px;

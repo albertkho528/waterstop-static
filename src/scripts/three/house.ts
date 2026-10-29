@@ -1,5 +1,5 @@
-// Rumah x-ray: titik area bocor, kamera terbang ke area terpilih, bagian terkait menyala biru.
-import { AREAS } from "../../data/areas"; // urutan id sama dengan tombol titik di halaman
+// X-ray house: leak area markers, camera flies to the selected area, related parts light up blue.
+import { AREAS } from "../../data/areas"; // id order matches the marker buttons on the page
 import { $, hooks, lerp, REDUCE, state } from "../state";
 import { createStage, makeRain, THREE } from "./core";
 
@@ -93,7 +93,7 @@ export function initHouse() {
     c: 0x4a3f36,
     o: 0.1,
     eo: 0.18,
-  }); // tanah
+  }); // ground
   const basement = part(new THREE.BoxGeometry(5, 2, 4), [-1.5, -1.15, 0], {
     o: 0.14,
   });
@@ -137,11 +137,11 @@ export function initHouse() {
   part(new THREE.BoxGeometry(0.9, 1.8, 0.04), [-0.4, 0.9, 2.06], {
     o: 0.1,
     eo: 0.6,
-  }); // pintu
+  }); // door
   part(new THREE.BoxGeometry(1.4, 0.9, 0.04), [-2.6, 3.8, 2.06], {
     o: 0.1,
     eo: 0.6,
-  }); // jendela
+  }); // window
   const crack: THREE.Vector3[] = [];
   let cxp = -2.2,
     cyp = 2.1;
@@ -251,7 +251,7 @@ export function initHouse() {
     });
     rain.update(dt);
   };
-  // titik di atas model; digeser bila berdempetan
+  // markers above the model; nudged apart when they collide
   S.after = () => {
     const placed: [number, number][] = [];
     AREAS.forEach((a, i) => {

@@ -1,6 +1,6 @@
 import type { Dict } from "./types";
 
-// 简体中文 (address "/zh/"). Mapei 的官方中文名为「马贝」。
+// Simplified Chinese (address "/zh/"). Mapei's official Chinese name is 「马贝」.
 export const zh: Dict = {
   htmlLang: "zh-Hans",
   langName: "中文",

@@ -1,4 +1,4 @@
-// Pusat bahasa: kamus per bahasa, alamat halaman, dan konten yang sudah diterjemahkan.
+// Language hub: per-language dictionaries, page addresses, and translated content.
 import { AREAS } from "../data/areas";
 import { PRODUCTS } from "../data/products";
 import { en } from "./en";
@@ -16,7 +16,7 @@ export const HREFLANG: Record<Lang, string> = {
   zh: "zh-Hans",
 };
 
-/** Alamat beranda tiap bahasa: "/" untuk Indonesia, "/en/" dan "/zh/" untuk lainnya. */
+/** Home address for each language: "/" for Indonesian, "/en/" and "/zh/" for the others. */
 export const homePath = (lang: Lang) =>
   lang === DEFAULT_LANG ? "/" : `/${lang}/`;
 
@@ -36,7 +36,7 @@ export interface LArea {
   steps: string[];
 }
 
-/** Semua yang dibutuhkan halaman (dan skrip di browser) untuk satu bahasa. */
+/** Everything a page (and the browser script) needs for one language. */
 export function content(lang: Lang) {
   const t = DICTS[lang];
   const products: LProduct[] = PRODUCTS.map((p) => ({

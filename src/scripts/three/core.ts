@@ -1,4 +1,4 @@
-// Inti 3D bersama: renderer, loop hemat baterai, tekstur, tumpukan lapisan, hujan.
+// Shared 3D core: renderer, battery-friendly loop, textures, layer stack, rain.
 import * as THREE from "three";
 
 import { REDUCE } from "../state";
@@ -48,7 +48,7 @@ function mkRenderer(canvas: HTMLCanvasElement) {
   }
 }
 
-/** Membuat satu viewport 3D yang hanya menggambar saat terlihat di layar. */
+/** Creates a single 3D viewport that only draws while visible on screen. */
 export function createStage(
   el: HTMLElement,
   canvas: HTMLCanvasElement,
@@ -58,7 +58,7 @@ export function createStage(
   if (!renderer) return null;
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(fov, 1, 0.1, 200);
-  // intensitas dikali PI karena three.js modern memakai satuan cahaya fisik
+  // intensity multiplied by PI because modern three.js uses physical light units
   scene.add(new THREE.HemisphereLight(0xcfe6ff, 0x101316, 0.85 * Math.PI));
   const key = new THREE.DirectionalLight(0xffffff, 0.95 * Math.PI);
   key.position.set(5, 8, 6);
@@ -122,7 +122,7 @@ export function createStage(
     camera.updateProjectionMatrix();
     S.kick();
   }
-  // seret horizontal untuk memutar; klik tanpa seret tetap jadi klik
+  // horizontal drag to rotate; a click without dragging still counts as a click
   let dragX: number | null = null;
   el.addEventListener("pointerdown", (e) => {
     if ((e.target as Element).closest("button")) return;
@@ -150,7 +150,7 @@ export function createStage(
   return S;
 }
 
-/* ---------- tekstur dari canvas ---------- */
+/* ---------- textures from canvas ---------- */
 export function ctex(
   w: number,
   h: number,
@@ -234,7 +234,7 @@ export function glowFloor(size: number, y: number) {
   return m;
 }
 
-/* ---------- tumpukan lapisan waterproofing ---------- */
+/* ---------- waterproofing layer stack ---------- */
 export type LayerKey = "beton" | "primer" | "mesh" | "membran" | "top";
 export interface Layer {
   key: LayerKey;
@@ -245,7 +245,7 @@ export interface Layer {
   y: number;
 }
 
-// nama lapisan ada di kamus bahasa (t.layers); di sini hanya tebal, nomor urut dan material
+// layer names live in the language dictionary (t.layers); only thickness, order number and material are here
 const LAYER_DEFS: Record<
   LayerKey,
   { h: number; n: string; mat: () => THREE.MeshStandardMaterialParameters }
@@ -296,7 +296,7 @@ export function buildStack(keys: LayerKey[]) {
     group.add(mesh);
     return { key: k, h: d.h, n: d.n, mesh, edge, y: 0 };
   });
-  /** spread: jarak antar lapisan (0 = rapat); appear[i]: 0..1 lapisan turun & muncul */
+  /** spread: distance between layers (0 = tight); appear[i]: 0..1 layer falls & fades in */
   function layout(spread: number, appear?: number[]) {
     let y = -1;
     layers.forEach((l, i) => {
@@ -317,7 +317,7 @@ export function buildStack(keys: LayerKey[]) {
   return { group, layers, layout, top, W, D };
 }
 
-/* ---------- hujan + percikan ---------- */
+/* ---------- rain + splashes ---------- */
 interface RainOpts {
   n: number;
   xr: number;

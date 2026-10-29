@@ -1,7 +1,7 @@
 import { defineConfig } from "astro/config";
 
-// `site` dipakai untuk canonical, hreflang, og:url, sitemap.xml dan data terstruktur.
-// Ganti bila domain berubah (ingat juga baris Sitemap di public/robots.txt).
+// `site` is used for canonical, hreflang, og:url, sitemap.xml and structured data.
+// Change it if the domain changes (remember the Sitemap line in public/robots.txt too).
 export default defineConfig({
   site: "https://waterstop.id",
   trailingSlash: "always",

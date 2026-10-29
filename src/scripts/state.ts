@@ -1,4 +1,4 @@
-// State bersama antara UI biasa dan adegan 3D, plus data bahasa halaman ini.
+// Shared state between the regular UI and the 3D scenes, plus the language data for this page.
 import type { Dict, Lang, LArea, LProduct } from "../i18n";
 import type { StepText } from "../i18n/types";
 
@@ -6,7 +6,7 @@ export const REDUCE =
   typeof matchMedia !== "undefined" &&
   matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-/** Data bahasa yang ditanam Page.astro di <script id="i18n-data">. */
+/** Language data that Page.astro embeds in <script id="i18n-data">. */
 export interface ClientData {
   lang: Lang;
   products: LProduct[];
@@ -23,7 +23,7 @@ export const data: ClientData = JSON.parse(
 
 export const state = {
   pSel: 0,
-  buildQ: 0, // progres tahap pemasangan 0..6 (dari scroll)
+  buildQ: 0, // installation stage progress 0..6 (from scroll)
   selectedArea: data.areas[0].id as string,
 };
 

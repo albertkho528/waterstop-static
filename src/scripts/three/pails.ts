@@ -1,6 +1,6 @@
-// Rak produk berputar. Bentuk tiap model mengikuti kemasan asli dari pabrik:
-// kit 2 komponen (sak + jeriken), sak, pail, gulungan, botol. Label digambar sendiri (bukan desain asli pabrik).
-// Bila `photo` diisi di products.ts, foto produk asli dipakai sebagai gantinya.
+// Rotating product shelf. Each model's shape follows the real factory packaging:
+// two-component kit (sack + jerrycan), sack, pail, roll, bottle. Labels are drawn ourselves (not the real factory design).
+// If `photo` is set in products.ts, the real product photo is used instead.
 import { type Product, PRODUCTS } from "../../data/products";
 import { $, hooks, lerp, state } from "../state";
 import { selectProduct } from "../ui";
@@ -62,7 +62,7 @@ export function initPails() {
       ? { bg: "#0b5fb4", fg: "#ffffff", acc: "#8fdcf5" }
       : { bg: "#e9ecee", fg: "#121417", acc: "#0b5fb4" };
 
-  /** Label melingkar untuk pail, gulungan, botol (tengah tekstur = sisi depan). */
+  /** Wrap-around label for pail, roll, bottle (centre of the texture = front side). */
   function wrapLabel(p: Product, sub?: string) {
     const c = colors(p);
     return ctex(1024, 330, (g, w, h) => {
@@ -89,13 +89,13 @@ export function initPails() {
       g.globalAlpha = 1;
     });
   }
-  /** Label datar untuk muka depan sak / jeriken. */
+  /** Flat label for the front face of a sack / jerrycan. */
   function flatLabel(p: Product, sub: string, compact = false) {
     const c = colors(p);
     return ctex(512, compact ? 512 : 680, (g, w, h) => {
       g.fillStyle = compact ? "#f1f3f4" : "#eef0f1";
       g.fillRect(0, 0, w, h);
-      // pita merek di atas
+      // brand band at the top
       const band = compact ? 120 : 170;
       g.fillStyle = c.bg === "#e9ecee" ? "#121417" : c.bg;
       g.fillRect(0, 0, w, band);
@@ -151,7 +151,7 @@ export function initPails() {
     );
   }
 
-  /** Sak berbentuk bantal: kotak yang sisi depan/belakangnya digembungkan. */
+  /** Pillow-shaped sack: a box whose front/back faces are puffed out. */
   function sack(
     label: THREE.MeshStandardMaterial,
     w = 1.1,
@@ -170,12 +170,12 @@ export function initPails() {
     }
     geo.computeVertexNormals();
     const paper = std({ color: 0xe7e9ea, roughness: 0.85 });
-    // urutan muka BoxGeometry: +x, -x, +y, -y, +z, -z — label di -z (sisi depan setelah diputar)
+    // BoxGeometry face order: +x, -x, +y, -y, +z, -z — label on -z (front side after rotation)
     const m = new THREE.Mesh(geo, [paper, paper, paper, paper, paper, label]);
     m.position.y = h / 2 + FLOOR;
     return m;
   }
-  /** Jeriken cairan dengan pegangan dan tutup. */
+  /** Liquid jerrycan with handle and cap. */
   function jerrycan(label: THREE.MeshStandardMaterial) {
     const g = new THREE.Group(),
       body = std({ color: 0xf2f4f5, roughness: 0.35 });
@@ -202,7 +202,6 @@ export function initPails() {
   }
 
   const loader = new THREE.TextureLoader();
-  // soft contact shadow under every item
   const shadowTex = ctex(128, 128, (g, w, h) => {
     const gr = g.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2);
     gr.addColorStop(0, "rgba(0,0,0,.75)");
@@ -222,7 +221,7 @@ export function initPails() {
     let yOff = 0;
 
     if (p.photo) {
-      // foto asli: kartu berdiri yang selalu menghadap kamera, tanpa pencahayaan agar warnanya asli
+      // real photo: a standing card that always faces the camera, unlit so the colours stay true
       const mat = new THREE.MeshBasicMaterial({
         transparent: true,
         alphaTest: 0.08,
@@ -354,7 +353,7 @@ export function initPails() {
       g.add(cap);
       yOff = FLOOR + 0.675;
     }
-    // sisi depan model = -z lokal; diputar agar menghadap keluar lingkaran
+    // model front = local -z; rotated so it faces outward from the ring
     const a = i * STEP;
     g.position.set(R * Math.sin(a), yOff, R * Math.cos(a));
     g.rotation.y = a + Math.PI;
@@ -398,7 +397,7 @@ export function initPails() {
       it.k = lerp(it.k, on ? 1 : 0, Math.min(1, dt * 6));
       it.g.scale.setScalar(0.86 + it.k * 0.26);
       it.g.position.y = it.yOff + it.k * (0.15 + Math.sin(S.time * 1.6) * 0.06);
-      // foto selalu menghadap kamera (batalkan putaran rak); model 3D tetap bergoyang pelan saat dipilih
+      // photo always faces the camera (cancel shelf rotation); 3D model still sways gently when selected
       it.g.rotation.y = it.photo
         ? -ringRot + (on ? Math.sin(S.time * 0.8) * 0.06 : 0)
         : it.a + Math.PI + (on ? Math.sin(S.time * 0.8) * 0.35 : 0);
@@ -439,7 +438,7 @@ export function initPails() {
   };
   S.start();
   hooks.pailGoTo(state.pSel);
-  // gambar ulang label setelah font web siap
+  // redraw labels once web fonts are ready
   document.fonts?.ready.then(() => {
     items.forEach((it, i) => {
       const p = PRODUCTS[i];

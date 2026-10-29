@@ -1,4 +1,4 @@
-// sitemap.xml dengan pasangan hreflang untuk ketiga bahasa (dibuat saat build).
+// sitemap.xml with hreflang pairs for all three languages (generated at build time).
 import type { APIRoute } from "astro";
 
 import { DEFAULT_LANG, homePath, HREFLANG, LANGS } from "../i18n";
