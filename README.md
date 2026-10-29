@@ -1,95 +1,96 @@
 # Waterstop Batam — website
 
-Website Toko Waterstop (PT JMA), dibangun dengan [Astro](https://astro.build) dan [three.js](https://threejs.org).
-Hasil build berupa file statis (HTML/CSS/JS), jadi bisa di-host di mana saja.
+Website for Toko Waterstop (PT JMA), built with [Astro](https://astro.build) and [three.js](https://threejs.org).
+The build output is static files (HTML/CSS/JS), so it can be hosted anywhere.
 
-## Menjalankan
+## Running
 
-Butuh Bun 1.4.4 (dipasang lewat Proto).
+Requires Bun 1.4.4 (installed through Proto).
 
 ```bash
 bun install
 bun run dev       # http://localhost:4321
-bun run build     # hasil di folder dist/
+bun run build     # output in dist/
 bun run typecheck
 bun run lint
 bun run format
 bun run preview
 ```
 
-## Yang paling sering diubah
+## What you will change most often
 
-| Ingin mengubah                                                       | File                                                                                                                        |
-| -------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| Nomor WA, alamat, link Facebook/Instagram/TikTok                     | `src/data/store.ts`                                                                                                         |
-| Semua teks halaman (judul, deskripsi, FAQ, pesan WhatsApp, jam buka) | `src/i18n/id.ts`, `en.ts`, `zh.ts`                                                                                          |
-| Daftar produk (merek, nama, bentuk kemasan 3D)                       | `src/data/products.ts` + deskripsinya di `productText` tiap file bahasa                                                     |
-| Foto produk asli di rak 3D                                           | PNG berlatar transparan di `public/produk/`, lalu isi `photo` produk itu di `src/data/products.ts`                          |
-| Logo                                                                 | `public/brand/` (SVG + PNG), ikon di header ada di `src/components/Header.astro`, favicon di `public/favicon.svg`           |
-| Area bocor di pencari solusi                                         | `src/data/areas.ts` + teksnya di `areas` tiap file bahasa                                                                   |
-| Foto proyek & toko                                                   | `public/proyek/` (WebP); urutan di `IMAGES` pada `src/components/Projects.astro`, teks di `projects.tiles` tiap file bahasa |
-| Warna, font, ukuran                                                  | variabel di bagian atas `src/styles/global.css`                                                                             |
-| Domain (untuk canonical & SEO)                                       | `site` di `astro.config.mjs`                                                                                                |
+| What you want to change                                               | File                                                                                                                          |
+| --------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| WhatsApp number, address, Facebook/Instagram/TikTok links             | `src/data/store.ts`                                                                                                           |
+| All page text (headings, descriptions, FAQ, WhatsApp messages, hours) | `src/i18n/id.ts`, `en.ts`, `zh.ts`                                                                                            |
+| Product list (brand, name, 3D package shape)                          | `src/data/products.ts` + its descriptions in `productText` in each language file                                              |
+| Real product photos on the 3D shelf                                   | Transparent-background PNGs in `public/produk/`, then set the product's `photo` in `src/data/products.ts`                     |
+| Logo                                                                  | `public/brand/` (SVG + PNG), the header icon is in `src/components/Header.astro`, the favicon in `public/favicon.svg`         |
+| Leak areas in the solution finder                                     | `src/data/areas.ts` + their text in `areas` in each language file                                                             |
+| Project and store photos                                              | `public/proyek/` (WebP); order in `IMAGES` in `src/components/Projects.astro`, text in `projects.tiles` in each language file |
+| Colours, fonts, sizes                                                 | variables at the top of `src/styles/global.css`                                                                               |
+| Domain (for canonical & SEO)                                          | `site` in `astro.config.mjs`                                                                                                  |
 
-Model 3D tiap produk mengikuti bentuk kemasan aslinya (`shape` di `products.ts`): `kit` (sak + jeriken
-untuk produk 2 komponen), `sack`, `pail`, `roll`, `bottle`. Label pada model digambar sendiri dari nama produk,
-bukan salinan desain kemasan pabrik. Untuk tampilan paling mirip aslinya, pakai foto produk sendiri (`photo`).
+Each product's 3D model follows its real package shape (`shape` in `products.ts`): `kit` (sack + jerrycan
+for two-component products), `sack`, `pail`, `roll`, `bottle`. Labels on the models are drawn from the product
+name, not copies of the factory packaging design. For the closest match to the real thing, use your own
+product photos (`photo`).
 
-Produk baru otomatis muncul di rak 3D, daftar produk, dan bisa dipakai di pencari solusi
-(nama di `areas.ts` harus sama persis dengan nama di `products.ts`).
+New products automatically appear on the 3D shelf and in the product list, and can be used in the solution
+finder (the name in `areas.ts` must match the name in `products.ts` exactly).
 
-## Tiga bahasa
+## Three languages
 
-| Bahasa            | Alamat | File teks        |
-| ----------------- | ------ | ---------------- |
-| Indonesia (utama) | `/`    | `src/i18n/id.ts` |
-| English           | `/en/` | `src/i18n/en.ts` |
-| 中文 (简体)       | `/zh/` | `src/i18n/zh.ts` |
+| Language          | Address | Text file        |
+| ----------------- | ------- | ---------------- |
+| Indonesian (main) | `/`     | `src/i18n/id.ts` |
+| English           | `/en/`  | `src/i18n/en.ts` |
+| 中文 (简体)       | `/zh/`  | `src/i18n/zh.ts` |
 
-- Ketiga file bahasa punya kunci yang sama persis (dicek oleh TypeScript lewat `src/i18n/types.ts`).
-  Kalau menambah teks di satu bahasa, tambahkan juga di dua lainnya; editor akan menandai yang terlewat.
-- Produk baru: tambahkan di `products.ts`, lalu tulis deskripsinya di `productText` pada **ketiga** file bahasa.
-- Pesan WhatsApp yang terisi otomatis memakai bahasa halaman yang sedang dibuka (`wa` di file bahasa),
-  jadi pengunjung bisa menghubungi toko dalam bahasa Indonesia, Inggris atau Mandarin.
-- Halaman Mandarin memuat font Noto Sans SC (hanya potongan huruf yang dipakai yang diunduh browser).
-- Setiap halaman punya `hreflang` dan judul/deskripsi sendiri supaya Google menampilkan versi bahasa yang tepat.
-  Isi `site` di `astro.config.mjs` dengan domain asli agar alamat-alamat itu lengkap.
+- All three language files have exactly the same keys (checked by TypeScript via `src/i18n/types.ts`).
+  If you add text in one language, add it in the other two as well; the editor will flag anything missing.
+- New product: add it in `products.ts`, then write its description in `productText` in **all three** language files.
+- The pre-filled WhatsApp message uses the language of the page currently open (`wa` in the language file),
+  so visitors can contact the store in Indonesian, English or Mandarin.
+- The Mandarin page loads the Noto Sans SC font (the browser only downloads the character subsets it uses).
+- Each page has its own `hreflang` and title/description so Google shows the right language version.
+  Set `site` in `astro.config.mjs` to the real domain so those addresses are complete.
 
 ## SEO
 
-- Domain diatur di `astro.config.mjs` (`site: "https://waterstop.id"`) dan di baris `Sitemap` pada `public/robots.txt`.
-- Setiap bahasa punya judul, deskripsi, `canonical`, `hreflang` (id, en, zh-Hans, x-default) dan gambar share sendiri
+- The domain is set in `astro.config.mjs` (`site: "https://waterstop.id"`) and on the `Sitemap` line in `public/robots.txt`.
+- Each language has its own title, description, `canonical`, `hreflang` (id, en, zh-Hans, x-default) and share image
   (`public/og/og-id.png`, `og-en.png`, `og-zh.png`, 1200×630).
-- `sitemap.xml` dibuat otomatis saat build, lengkap dengan pasangan hreflang.
-- Data terstruktur (JSON-LD): bisnis lokal (alamat, telepon, peta, merek, katalog produk, layanan, bahasa layanan),
-  WebSite, WebPage dan FAQPage.
-- Judul utama (h1) berisi kalimat kata kunci yang tersembunyi secara visual (`h1sr` di file bahasa).
-- Foto proyek dan foto toko punya teks alt per bahasa.
-- Setelah online: daftarkan situs di Google Search Console, kirim `https://waterstop.id/sitemap.xml`,
-  dan tambahkan link waterstop.id di Google Business Profile toko.
+- `sitemap.xml` is generated automatically at build time, complete with hreflang pairs.
+- Structured data (JSON-LD): local business (address, phone, map, brands, product catalogue, services, service languages),
+  WebSite, WebPage and FAQPage.
+- The main heading (h1) contains the keyword sentence visually hidden (`h1sr` in the language file).
+- Project photos and store photos have alt text per language.
+- Once online: register the site with Google Search Console, submit `https://waterstop.id/sitemap.xml`,
+  and add the waterstop.id link to the store's Google Business Profile.
 
-## Struktur
+## Structure
 
 ```
 src/
-  data/            data toko, produk, area (bagian yang sama di semua bahasa)
-  i18n/            teks tiap bahasa: id.ts, en.ts, zh.ts (+ types.ts, index.ts)
+  data/            store, product and area data (the same part in every language)
+  i18n/            text per language: id.ts, en.ts, zh.ts (+ types.ts, index.ts)
   pages/           index.astro (ID), en/index.astro, zh/index.astro
-  components/      Page.astro menyusun semua section; tiap section (Hero, BuildStory, Finder, ...) satu file
-  layouts/Base.astro   <head>, SEO, data terstruktur Google (LocalBusiness)
-  lib/templates.ts     template HTML yang dipakai server dan browser
+  components/      Page.astro assembles all sections; each section (Hero, BuildStory, Finder, ...) is one file
+  layouts/Base.astro   <head>, SEO, Google structured data (LocalBusiness)
+  lib/templates.ts     HTML templates used by both server and browser
   scripts/
-    main.ts        titik masuk; tiap adegan 3D dimuat saat mendekati layar
-    ui.ts          menu, pencari solusi, pilihan produk, tahap scroll
-    three/         adegan 3D: hero, build (scroll story), house (rumah x-ray), pails (rak produk)
+    main.ts        entry point; each 3D scene loads when it is about to enter the screen
+    ui.ts          menu, solution finder, product selection, scroll stages
+    three/         3D scenes: hero, build (scroll story), house (x-ray house), pails (product shelf)
 ```
 
-Catatan teknis:
+Technical notes:
 
-- Font di-host sendiri lewat `@fontsource` (tidak bergantung Google Fonts).
-- 3D hanya menggambar saat terlihat di layar, dan berhenti total bila pengguna memilih
-  "kurangi animasi" di perangkatnya. Tanpa WebGL, halaman tetap lengkap dalam versi datar.
-- Bentuk kemasan di rak 3D hanya ilustrasi; labelnya digambar dari data produk.
+- Fonts are self-hosted through `@fontsource` (no dependency on Google Fonts).
+- 3D only draws while visible on screen, and stops entirely when the user chooses
+  "reduce motion" on their device. Without WebGL the page is still complete in a flat version.
+- Package shapes on the 3D shelf are only illustrations; their labels are drawn from the product data.
 
 ## Pre-commit
 
@@ -97,12 +98,12 @@ Catatan teknis:
 pre-commit install
 ```
 
-Hook menjalankan format, lint, dan typecheck sebelum commit.
+The hook runs format, lint and typecheck before each commit.
 
 ## Deploy
 
-Push ke `main` → Woodpecker membangun image → Flux image automation memperbarui
-tag di `deploy/` → Flux menggulirkan pod.
+Push to `main` → Woodpecker builds the image → Flux image automation updates the
+tag in `deploy/` → Flux rolls the pod.
 
 - Registry: `registry.kudofools.dev/waterstop/waterstop-static`
 - Namespace: `waterstop-static`
