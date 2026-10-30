@@ -42,32 +42,33 @@ const C = t.contact;
     <dl class="card">
       <div class="crow">
         <dt>{C.phone}</dt>
-        <dd id="c-wa">{STORE.phoneDisplay}</dd>
-        <button class="copy" data-copy="c-wa" type="button">
-          {C.copy}
-        </button>
+        <dd>
+          <span id="c-wa">{STORE.phoneDisplay}</span>
+          <button class="copy" data-copy="c-wa" type="button">
+            {C.copy}
+          </button>
+        </dd>
       </div>
       <div class="crow">
         <dt>{C.address}</dt>
-        <dd id="c-addr">{STORE.address}</dd>
-        <button class="copy" data-copy="c-addr" type="button">
-          {C.copy}
-        </button>
+        <dd>
+          <span id="c-addr">{STORE.address}</span>
+          <button class="copy" data-copy="c-addr" type="button">
+            {C.copy}
+          </button>
+        </dd>
       </div>
       <div class="crow">
         <dt>{C.hours}</dt>
         <dd>{C.hoursValue}</dd>
-        <span></span>
       </div>
       <div class="crow">
         <dt>{C.google}</dt>
         <dd>{C.ratingShort}</dd>
-        <span></span>
       </div>
       <div class="crow">
         <dt>{C.brands}</dt>
         <dd>Mapei · Bondall</dd>
-        <span></span>
       </div>
     </dl>
   </div>

@@ -1384,7 +1384,7 @@ section.sec > .wrap {
 }
 .crow {
   display: grid;
-  grid-template-columns: 110px 1fr auto;
+  grid-template-columns: 110px 1fr;
   gap: 12px;
   align-items: center;
   padding: 16px 18px;
@@ -1400,10 +1400,17 @@ section.sec > .wrap {
   color: var(--muted);
 }
 .crow dd {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   margin: 0;
   font-weight: 600;
   min-width: 0;
   overflow-wrap: anywhere;
+}
+.crow dd > span {
+  min-width: 0;
 }
 .copy {
   all: unset;
@@ -1425,7 +1432,7 @@ section.sec > .wrap {
 }
 @media (max-width: 560px) {
   .crow {
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 1fr;
     gap: 6px 12px;
   }
   .crow dt {
