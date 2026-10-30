@@ -12,3 +12,6 @@ deploy
 eslint.config.mjs
 .prettierrc
 .prettierignore
+.unlighthouse
+unlighthouse.config.ts
+/scripts

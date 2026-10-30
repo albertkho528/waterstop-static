@@ -100,6 +100,27 @@ pre-commit install
 
 The hook runs format, lint and typecheck before each commit.
 
+## QA
+
+QA runs locally against the same SWS container used in production:
+
+```bash
+bun run qa
+```
+
+The script builds `waterstop-qa`, serves it on `http://127.0.0.1:8080`, and
+asserts all four Lighthouse categories on `/`, `/en/` and `/zh/`. It runs three
+samples per route and asserts the median, so a single noisy sample cannot fail
+the build.
+
+- Performance floor: 50. The current median is 56, so the gate catches
+  regressions without failing on run-to-run variance.
+- Accessibility, best-practices and SEO floors: 90.
+- Only the edge-only audits are skipped (`is-on-https`, `redirects-http`,
+  `uses-http2`); SWS headers are still checked.
+
+Set `CHROME_PATH` if the system Chrome is not detected.
+
 ## Deploy
 
 Push to `main` → Woodpecker builds the image → Flux image automation updates the
