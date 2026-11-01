@@ -1,0 +1,22 @@
+---
+import { Font } from "astro:assets";
+
+interface Props {
+  preload?: boolean;
+}
+
+const { preload = true } = Astro.props;
+---
+
+<Font
+  cssVariable="--font-archivo"
+  preload={preload ? [{ weight: 400 }, { weight: 500 }] : false}
+/>
+<Font
+  cssVariable="--font-big-shoulders"
+  preload={preload ? [{ weight: 900 }] : false}
+/>
+<Font
+  cssVariable="--font-jetbrains"
+  preload={preload ? [{ weight: 700 }] : false}
+/>

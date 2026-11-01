@@ -6,6 +6,22 @@ import { $, hooks, lerp, state } from "../state";
 import { selectProduct } from "../ui";
 import { createStage, ctex, glowTex, THREE } from "./core";
 
+// Astro hashes font-family names, so canvas text must use the generated CSS variable value.
+function resolveFontFamilies() {
+  const read = (variable: string, fallback: string) => {
+    const raw = getComputedStyle(document.documentElement)
+      .getPropertyValue(variable)
+      .split(",")[0]
+      .trim()
+      .replace(/^["']|["']$/g, "");
+    return `"${raw || fallback}"`;
+  };
+  return {
+    mono: read("--font-jetbrains", "JetBrains Mono"),
+    display: read("--font-big-shoulders", "Big Shoulders Display"),
+  };
+}
+
 type Mat = THREE.MeshStandardMaterial | THREE.MeshBasicMaterial;
 type Item = {
   g: THREE.Group;
@@ -25,6 +41,7 @@ export function initPails() {
     return;
   }
 
+  const fonts = resolveFontFamilies();
   const N = PRODUCTS.length,
     STEP = (Math.PI * 2) / N,
     R = 3.3,
@@ -76,10 +93,10 @@ export function initPails() {
       g.fillRect(0, 22, w, 6);
       g.textAlign = "center";
       g.fillStyle = c.fg;
-      g.font = "700 30px 'JetBrains Mono', monospace";
+      g.font = `700 30px ${fonts.mono}, monospace`;
       g.fillText(p.brand.toUpperCase(), w / 2, 74);
       nameLines(g, p.name, w / 2, 150, 190, 300, 104, 78);
-      g.font = "500 20px 'JetBrains Mono', monospace";
+      g.font = `500 20px ${fonts.mono}, monospace`;
       g.globalAlpha = 0.8;
       g.fillText(
         sub ? `WATERPROOFING · ${sub}` : "WATERPROOFING",
@@ -103,17 +120,17 @@ export function initPails() {
       g.fillRect(0, band, w, 10);
       g.textAlign = "center";
       g.fillStyle = "#ffffff";
-      g.font = `700 ${compact ? 34 : 40}px 'JetBrains Mono', monospace`;
+      g.font = `700 ${compact ? 34 : 40}px ${fonts.mono}, monospace`;
       g.fillText(p.brand.toUpperCase(), w / 2, band * 0.62);
       g.fillStyle = "#121417";
       if (compact) {
-        g.font = "900 120px 'Big Shoulders Display', Impact, sans-serif";
+        g.font = `900 120px ${fonts.display}, Impact, sans-serif`;
         g.fillText("B", w / 2, 300);
-        g.font = "700 46px 'JetBrains Mono', monospace";
+        g.font = `700 46px ${fonts.mono}, monospace`;
         g.fillText(sub, w / 2, 400);
       } else {
         nameLines(g, p.name, w / 2, 300, 340, 440, 120, 92);
-        g.font = "700 64px 'JetBrains Mono', monospace";
+        g.font = `700 64px ${fonts.mono}, monospace`;
         g.fillText(sub, w / 2, h - 120);
         g.fillStyle = c.bg === "#e9ecee" ? "#121417" : c.bg;
         g.fillRect(0, h - 40, w, 40);
@@ -137,7 +154,7 @@ export function initPails() {
         : [name.toUpperCase()];
     let fs = lines.length > 1 ? fs2 : fs1;
     const setF = () =>
-      (g.font = `900 ${fs}px 'Big Shoulders Display', Impact, sans-serif`);
+      (g.font = `900 ${fs}px ${fonts.display}, Impact, sans-serif`);
     setF();
     while (
       Math.max(...lines.map((l) => g.measureText(l).width)) > maxW &&

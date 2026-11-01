@@ -1,15 +1,7 @@
 ---
-import "@fontsource/archivo/latin-400";
-import "@fontsource/archivo/latin-500";
-import "@fontsource/archivo/latin-600";
-import "@fontsource/archivo/latin-700";
-import "@fontsource/big-shoulders-display/latin-700";
-import "@fontsource/big-shoulders-display/latin-800";
-import "@fontsource/big-shoulders-display/latin-900";
-import "@fontsource/jetbrains-mono/latin-500";
-import "@fontsource/jetbrains-mono/latin-700";
 import "../styles/global.css";
 
+import Fonts from "../components/Fonts.astro";
 import { PRODUCTS } from "../data/products";
 import { STORE } from "../data/store";
 import {
@@ -133,6 +125,7 @@ const jsonLd = {
       name="viewport"
       content="width=device-width, initial-scale=1, viewport-fit=cover"
     />
+    <Fonts />
     <title>{t.meta.title}</title>
     <meta name="description" content={t.meta.desc} />
     <meta name="robots" content="index, follow, max-image-preview:large" />

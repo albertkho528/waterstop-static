@@ -1,4 +1,6 @@
 ---
+import Fonts from "../components/Fonts.astro";
+
 const links = [
   { href: "/", label: "Indonesia" },
   { href: "/en/", label: "English" },
@@ -12,10 +14,13 @@ const links = [
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex" />
+    <Fonts preload={false} />
     <title>Halaman tidak ditemukan — Waterstop</title>
     <style>
       :root {
         color-scheme: dark;
+        --body: var(--font-archivo);
+        --display: var(--font-big-shoulders);
       }
       body {
         margin: 0;
@@ -24,10 +29,7 @@ const links = [
         place-items: center;
         background: #08090b;
         color: #e8eaec;
-        font:
-          400 16px/1.6 Archivo,
-          Arial,
-          sans-serif;
+        font: 400 16px/1.6 var(--body);
       }
       main {
         max-width: 560px;
@@ -41,10 +43,7 @@ const links = [
       }
       h1 {
         margin: 0 0 12px;
-        font:
-          900 clamp(40px, 10vw, 72px)/0.9 "Big Shoulders Display",
-          Impact,
-          sans-serif;
+        font: 900 clamp(40px, 10vw, 72px)/0.9 var(--display);
         text-transform: uppercase;
       }
       p {
