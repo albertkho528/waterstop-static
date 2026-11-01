@@ -1,9 +1,5 @@
 ---
-// The Noto Sans SC font is only loaded on the Mandarin page; the browser only downloads the character subsets it uses.
-import "@fontsource/noto-sans-sc/400";
-import "@fontsource/noto-sans-sc/700";
-import "@fontsource/noto-sans-sc/900";
-
+// CJK glyphs use the platform stack; the Noto Sans SC webfont cost 1.7 MB across 56 subsets on mobile.
 import Page from "../../components/Page.astro";
 ---
 

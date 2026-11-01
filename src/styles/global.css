@@ -1545,7 +1545,7 @@ footer.foot .wrap {
   }
 }
 
-/* ---------- Mandarin: CJK glyphs from Noto Sans SC, looser line spacing ---------- */
+/* ---------- Mandarin: CJK glyphs use the fallback stack; looser line spacing ---------- */
 html[lang^="zh"] {
   --display:
     "Big Shoulders Display", "Noto Sans SC", "PingFang SC", "Microsoft YaHei",
