@@ -30,7 +30,7 @@ spec:
       automountServiceAccountToken: false
       containers:
         - name: sws
-          image: registry.kudofools.dev/waterstop/waterstop-static:build-000006-sha-4cb40651 # {"$imagepolicy": "flux-system:waterstop-static"}
+          image: registry.kudofools.dev/waterstop/waterstop-static:build-000007-sha-ee924b80 # {"$imagepolicy": "flux-system:waterstop-static"}
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false
