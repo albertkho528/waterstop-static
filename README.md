@@ -105,19 +105,24 @@ The hook runs format, lint and typecheck before each commit.
 QA runs locally against the same SWS container used in production:
 
 ```bash
-bun run qa
+bun run qa            # desktop + mobile
+bun run qa:desktop    # desktop only
+bun run qa:mobile     # mobile only
 ```
 
 The script builds `waterstop-qa`, serves it on `http://127.0.0.1:8080`, and
-asserts all four Lighthouse categories on `/`, `/en/` and `/zh/`. It runs three
+asserts all four Lighthouse categories. Desktop and mobile both check `/`,
+`/en/` and `/zh/`; mobile uses slow-4G throttling. Every run takes three
 samples per route and asserts the median, so a single noisy sample cannot fail
 the build.
 
-- Performance floor: 50. The current median is 56, so the gate catches
-  regressions without failing on run-to-run variance.
+- Performance floors: 50 desktop, 60 mobile.
 - Accessibility, best-practices and SEO floors: 90.
 - Only the edge-only audits are skipped (`is-on-https`, `redirects-http`,
   `uses-http2`); SWS headers are still checked.
+
+A full run takes roughly 20 minutes because of the samples; use the desktop or
+mobile script while iterating.
 
 Set `CHROME_PATH` if the system Chrome is not detected.
 

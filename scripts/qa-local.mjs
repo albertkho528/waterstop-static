@@ -1,5 +1,11 @@
 import { spawnSync } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  renameSync,
+  rmSync,
+} from "node:fs";
 import { setTimeout as sleep } from "node:timers/promises";
 
 const runtime =
@@ -19,7 +25,34 @@ const image = "waterstop-qa";
 const name = "waterstop-qa";
 const port = 8080;
 const site = `http://127.0.0.1:${port}`;
-const reportPath = ".unlighthouse/ci-result.json";
+const reportDir = ".unlighthouse";
+const reportPath = `${reportDir}/ci-result.json`;
+
+const profiles = [
+  {
+    name: "desktop",
+    flag: "--desktop",
+    config: "unlighthouse.config.ts",
+    report: `${reportDir}/ci-desktop.json`,
+    expected: 3,
+  },
+  {
+    name: "mobile",
+    flag: "--mobile",
+    config: "unlighthouse.mobile.config.ts",
+    report: `${reportDir}/ci-mobile.json`,
+    expected: 3,
+  },
+];
+
+const requested = process.argv.slice(2);
+const selected = requested.length
+  ? profiles.filter((profile) => requested.includes(profile.flag))
+  : profiles;
+if (selected.length === 0) {
+  console.error("Usage: bun scripts/qa-local.mjs [--desktop] [--mobile]");
+  process.exit(1);
+}
 
 function run(command, args, options = {}) {
   return spawnSync(command, args, {
@@ -34,7 +67,29 @@ function stopContainer() {
   run(runtime, ["rm", "-f", name], { stdio: "ignore" });
 }
 
-let status = 1;
+function percent(value) {
+  if (typeof value !== "number") return "n/a";
+  return Math.round(value <= 1 ? value * 100 : value);
+}
+
+function printSummary(profile) {
+  if (!existsSync(profile.report)) return 0;
+  const data = JSON.parse(readFileSync(profile.report, "utf8"));
+  const routes = Array.isArray(data)
+    ? data
+    : Array.isArray(data.routes)
+      ? data.routes
+      : [];
+  for (const route of routes) {
+    console.log(
+      `  ${profile.name} ${route.path ?? route.url ?? "?"}  perf ${percent(route.performance)}  a11y ${percent(route.accessibility)}  bp ${percent(route["best-practices"])}  seo ${percent(route.seo)}`,
+    );
+  }
+  return routes.length;
+}
+
+let status = 0;
+mkdirSync(reportDir, { recursive: true });
 
 try {
   const build = run(runtime, [
@@ -75,40 +130,45 @@ try {
   }
   if (!up) throw new Error(`local container did not respond at ${site}`);
 
-  const qa = run(
-    "bunx",
-    [
-      "unlighthouse-ci",
-      "--site",
-      site,
-      "--desktop",
-      "--assert",
-      "--enable-i18n-pages",
-      "--config-file",
-      "unlighthouse.config.ts",
-    ],
-    { timeout: 900_000 },
-  );
-  if (qa.status !== 0) {
-    status = qa.status ?? 1;
-    throw new Error(`unlighthouse-ci exited with status ${status}`);
-  }
+  for (const profile of selected) {
+    rmSync(reportPath, { force: true });
+    rmSync(profile.report, { force: true });
 
-  const data = JSON.parse(readFileSync(reportPath, "utf8"));
-  const routes = Array.isArray(data)
-    ? data.length
-    : Array.isArray(data.routes)
-      ? data.routes.length
-      : 0;
-  if (routes === 0) {
-    throw new Error(
-      "Unlighthouse scanned no routes; check the local container",
+    const qa = run(
+      "bunx",
+      [
+        "unlighthouse-ci",
+        "--site",
+        site,
+        profile.flag,
+        "--assert",
+        "--enable-i18n-pages",
+        "--config-file",
+        profile.config,
+      ],
+      { timeout: 1_200_000 },
     );
+    if (qa.status !== 0) status = qa.status ?? 1;
+
+    if (existsSync(reportPath)) {
+      renameSync(reportPath, profile.report);
+    } else {
+      console.error(`No report written for ${profile.name}.`);
+      status = 1;
+      continue;
+    }
+
+    const routes = printSummary(profile);
+    if (routes !== profile.expected) {
+      console.error(
+        `Expected ${profile.expected} routes for ${profile.name}, got ${routes}.`,
+      );
+      status = 1;
+    }
   }
-  console.log(`Local QA scanned ${routes} routes.`);
-  status = 0;
 } catch (error) {
   console.error(error instanceof Error ? error.message : error);
+  status = 1;
 } finally {
   stopContainer();
 }

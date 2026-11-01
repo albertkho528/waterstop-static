@@ -9,8 +9,9 @@
     "format": "prettier --write .",
     "preview": "astro preview",
     "astro": "astro",
-    "qa": "bun run qa:local",
-    "qa:local": "bun scripts/qa-local.mjs"
+    "qa": "bun scripts/qa-local.mjs",
+    "qa:desktop": "bun scripts/qa-local.mjs --desktop",
+    "qa:mobile": "bun scripts/qa-local.mjs --mobile"
   },
   "dependencies": {
     "@fontsource/archivo": "5.3.0",
