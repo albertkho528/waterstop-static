@@ -19,17 +19,17 @@ bun run preview
 
 ## What you will change most often
 
-| What you want to change                                               | File                                                                                                                          |
-| --------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| WhatsApp number, address, Facebook/Instagram/TikTok links             | `src/data/store.ts`                                                                                                           |
-| All page text (headings, descriptions, FAQ, WhatsApp messages, hours) | `src/i18n/id.ts`, `en.ts`, `zh.ts`                                                                                            |
-| Product list (brand, name, 3D package shape)                          | `src/data/products.ts` + its descriptions in `productText` in each language file                                              |
-| Real product photos on the 3D shelf                                   | Transparent-background PNGs in `public/produk/`, then set the product's `photo` in `src/data/products.ts`                     |
-| Logo                                                                  | `public/brand/` (SVG + PNG), the header icon is in `src/components/Header.astro`, the favicon in `public/favicon.svg`         |
-| Leak areas in the solution finder                                     | `src/data/areas.ts` + their text in `areas` in each language file                                                             |
-| Project and store photos                                              | `public/proyek/` (WebP); order in `IMAGES` in `src/components/Projects.astro`, text in `projects.tiles` in each language file |
-| Colours, fonts, sizes                                                 | variables at the top of `src/styles/global.css`                                                                               |
-| Domain (for canonical & SEO)                                          | `site` in `astro.config.mjs`                                                                                                  |
+| What you want to change                                               | File                                                                                                                                                         |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| WhatsApp number, address, Facebook/Instagram/TikTok links             | `src/data/store.ts`                                                                                                                                          |
+| All page text (headings, descriptions, FAQ, WhatsApp messages, hours) | `src/i18n/id.ts`, `en.ts`, `zh.ts`                                                                                                                           |
+| Product list (brand, name, 3D package shape)                          | `src/data/products.ts` + its descriptions in `productText` in each language file                                                                             |
+| Real product photos on the 3D shelf                                   | Transparent-background PNGs in `public/produk/` (raw 3D textures, not Astro-processed), then set the product's `photo` in `src/data/products.ts`             |
+| Logo                                                                  | `public/brand/` (SVG + PNG), the header icon is in `src/components/Header.astro`, the favicon in `public/favicon.svg`                                        |
+| Leak areas in the solution finder                                     | `src/data/areas.ts` + their text in `areas` in each language file                                                                                            |
+| Project and store photos                                              | `src/assets/images/proyek/` (WebP, optimized by Astro); order in `IMAGES` in `src/components/Projects.astro`, text in `projects.tiles` in each language file |
+| Colours, fonts, sizes                                                 | variables at the top of `src/styles/global.css`                                                                                                              |
+| Domain (for canonical & SEO)                                          | `site` in `astro.config.mjs`                                                                                                                                 |
 
 Each product's 3D model follows its real package shape (`shape` in `products.ts`): `kit` (sack + jerrycan
 for two-component products), `sack`, `pail`, `roll`, `bottle`. Labels on the models are drawn from the product

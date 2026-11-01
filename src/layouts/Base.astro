@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 
+import storePhoto from "../assets/images/proyek/toko.webp";
 import Fonts from "../components/Fonts.astro";
 import { PRODUCTS } from "../data/products";
 import { STORE } from "../data/store";
@@ -41,7 +42,7 @@ const business = {
   description: t.meta.desc,
   url: canonical,
   logo: abs("/brand/waterstop-logo-icon-1024.png"),
-  image: [abs("/proyek/toko.webp"), ogImage],
+  image: [abs(storePhoto.src), ogImage],
   telephone: STORE.phoneDisplay.replace(/[\s-]/g, ""),
   hasMap: STORE.maps,
   address: {

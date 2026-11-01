@@ -13,8 +13,8 @@ export interface Product {
   pack?: { sack?: string; can?: string; pail?: string; bottle?: string };
   /**
    * Real product photo (optional). Put a PNG with a transparent background in public/produk/,
-   * then fill in its path, e.g. "/produk/mapelastic.png". When set, the 3D shelf and the detail panel
-   * use this photo instead of the package model.
+   * then fill in its path, e.g. "/produk/mapelastic.png". It stays in public/ because the 3D shelf
+   * loads it as a raw texture; when set, the shelf and the detail panel use it instead of the model.
    */
   photo?: string;
 }

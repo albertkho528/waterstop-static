@@ -1716,6 +1716,9 @@ nav.links a,
 }
 
 /* ---------- project photos ---------- */
+.ph picture {
+  display: contents;
+}
 .ph img {
   position: absolute;
   inset: 0;
@@ -1754,6 +1757,9 @@ nav.links a,
   border: 1px solid var(--line);
   background: var(--slab);
   max-width: 560px;
+}
+.store picture {
+  display: block;
 }
 .store img {
   display: block;

@@ -1,4 +1,7 @@
 ---
+import { Picture } from "astro:assets";
+
+import storePhoto from "../assets/images/proyek/toko.webp";
 import { STORE, waExt, waLink } from "../data/store";
 import type { Content } from "../i18n";
 interface Props {
@@ -28,13 +31,14 @@ const C = t.contact;
         </a>
       </div>
       <figure class="store">
-        <img
-          src="/proyek/toko.webp"
+        <Picture
+          src={storePhoto}
           alt={`${C.store} · Waterstop Mapei Bondall`}
+          widths={[320, 560, 960]}
+          sizes="(max-width: 900px) 100vw, 560px"
+          formats={["avif", "webp"]}
+          fallbackFormat="webp"
           loading="lazy"
-          decoding="async"
-          width="960"
-          height="720"
         />
         <figcaption>{C.store}</figcaption>
       </figure>
