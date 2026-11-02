@@ -1,5 +1,6 @@
 // Non-3D interactions: menu, curing meter, tilt cards, copy, solution finder, product selection, installation stages.
 import { areaResult, pad2, productDetail } from "../lib/templates";
+import { onResize, onScroll, requestMeasure } from "./scroll";
 import { $, clamp, data, hooks, REDUCE, state } from "./state";
 
 const PRODUCTS = data.products,
@@ -24,14 +25,19 @@ const t = data.t as unknown as import("../i18n").Dict;
 {
   const t = $("#cureTxt"),
     bar = $("#cureBar");
-  const f = () => {
-    const h = document.documentElement;
-    const p = clamp(h.scrollTop / (h.scrollHeight - h.clientHeight || 1));
+  let range = 1;
+  const update = () => {
+    const p = clamp(scrollY / range);
     t.textContent = Math.round(p * 100) + "%";
     bar.style.width = p * 100 + "%";
   };
-  addEventListener("scroll", f, { passive: true });
-  f();
+  const measure = () => {
+    range = Math.max(1, document.documentElement.scrollHeight - innerHeight);
+    update();
+  };
+  onScroll(update);
+  onResize(measure);
+  measure();
 }
 
 if (!REDUCE && matchMedia("(hover:hover) and (pointer:fine)").matches) {
@@ -88,6 +94,7 @@ export function selectProduct(i: number) {
   $("#pailCount").textContent = pad2(state.pSel + 1) + " / " + pad2(n);
   pDetail.innerHTML = productDetail(PRODUCTS[state.pSel], t);
   hooks.pailGoTo(state.pSel);
+  requestMeasure();
 }
 pIndex.addEventListener("click", (e) => {
   const b = (e.target as Element).closest<HTMLElement>(".chipbtn");
@@ -111,6 +118,7 @@ export function showArea(id: string, fly = true) {
     .forEach((h) => h.classList.toggle("on", h.dataset.id === a.id));
   resEl.innerHTML = areaResult(a, t, PRODUCTS);
   hooks.houseFocus(a.id, fly);
+  requestMeasure();
 }
 areasEl.addEventListener("click", (e) => {
   const b = (e.target as Element).closest<HTMLElement>(".chipbtn");
@@ -130,12 +138,12 @@ resEl.addEventListener("click", (e) => {
 {
   const list = $("#buildSteps");
   const items = [...list.children] as HTMLElement[];
-  let active = 0;
-  const f = () => {
-    const r = list.getBoundingClientRect(),
-      vh = innerHeight;
-    const line = innerWidth <= 900 ? vh * 0.74 : vh * 0.55;
-    const p = clamp((line - r.top) / r.height);
+  let active = 0,
+    listTop = 0,
+    listHeight = 1,
+    line = 1;
+  const update = () => {
+    const p = clamp((line - (listTop - scrollY)) / listHeight);
     state.buildQ = p * BUILD_STEPS.length;
     const a = Math.min(
       BUILD_STEPS.length - 1,
@@ -151,7 +159,16 @@ resEl.addEventListener("click", (e) => {
     }
     $("#buildBar").style.width = (p * 100).toFixed(1) + "%";
   };
-  addEventListener("scroll", f, { passive: true });
-  addEventListener("resize", f);
-  f();
+  const measure = () => {
+    const r = list.getBoundingClientRect();
+    listTop = r.top + scrollY;
+    listHeight = r.height || 1;
+    line = innerWidth <= 900 ? innerHeight * 0.74 : innerHeight * 0.55;
+    update();
+  };
+  onScroll(update);
+  onResize(measure);
+  measure();
 }
+
+document.fonts?.ready.then(requestMeasure);

@@ -1,5 +1,6 @@
 // Hero: exploded roof slab cross-section that assembles on scroll, rain splashing on the top coat.
 import { esc } from "../../lib/templates";
+import { onResize, onScroll } from "../scroll";
 import { $, clamp, data, lerp, REDUCE } from "../state";
 import { buildStack, createStage, glowFloor, makeRain } from "./core";
 
@@ -23,6 +24,18 @@ export function initHero() {
     })
     .join("");
   const lbls = [...lab.children] as HTMLElement[];
+
+  let top = 0,
+    height = 1,
+    labelW = 90,
+    labelH = 22;
+  const measure = () => {
+    const r = el.getBoundingClientRect();
+    top = r.top + scrollY;
+    height = r.height || 1;
+    labelW = Math.max(...lbls.map((e) => e.offsetWidth || 90));
+    labelH = (lbls[0]?.offsetHeight || 22) + 6;
+  };
 
   let rot = -0.6,
     autoP = 0,
@@ -61,8 +74,7 @@ export function initHero() {
   };
   S.frame = (dt) => {
     // layers stay exploded while the viewport is fully visible, and assemble when scrolled past the header
-    const r = el.getBoundingClientRect();
-    const target = 1 - clamp((90 - r.top) / (r.height * 0.75));
+    const target = 1 - clamp((90 - (top - scrollY)) / (height * 0.75));
     spread = lerp(spread, target, Math.min(1, dt * 5));
     if (!REDUCE && autoP <= 0) rot += dt * 0.16;
     autoP -= dt;
@@ -86,17 +98,15 @@ export function initHero() {
         }
       ys.push({ i, y: S.toScreen(0, l.y, 0, st.group.matrixWorld)[1] });
     });
-    const lw = Math.max(...lbls.map((e) => e.offsetWidth || 90)),
-      lh = (lbls[0].offsetHeight || 22) + 6;
-    const x = Math.max(10, Math.min(maxX + 14, S.w - lw - 14));
+    const x = Math.max(10, Math.min(maxX + 14, S.w - labelW - 14));
     ys.sort((a, b) => a.y - b.y);
     for (let k = 1; k < ys.length; k++)
-      if (ys[k].y < ys[k - 1].y + lh) ys[k].y = ys[k - 1].y + lh;
-    const over = ys[ys.length - 1].y + lh / 2 - (S.h - 44);
+      if (ys[k].y < ys[k - 1].y + labelH) ys[k].y = ys[k - 1].y + labelH;
+    const over = ys[ys.length - 1].y + labelH / 2 - (S.h - 44);
     if (over > 0) ys.forEach((o) => (o.y -= over));
     ys.forEach((o) => {
       lbls[o.i].style.transform =
-        `translate(${x.toFixed(1)}px,${(o.y - lh / 2 + 3).toFixed(1)}px)`;
+        `translate(${x.toFixed(1)}px,${(o.y - labelH / 2 + 3).toFixed(1)}px)`;
     });
   };
   S.onDrag = (dx) => {
@@ -114,6 +124,9 @@ export function initHero() {
       my = (e.clientY - r.top) / r.height - 0.5;
       S.kick();
     });
-  addEventListener("scroll", S.kick, { passive: true });
+  onScroll(() => S.kick());
+  onResize(measure);
+  document.fonts?.ready.then(measure);
+  measure();
   S.start();
 }

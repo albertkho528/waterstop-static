@@ -1,4 +1,5 @@
 // Installation simulation: crack patched, primer, mesh, membrane, then flood test — following the scroll.
+import { onScroll } from "../scroll";
 import { $, clamp, lerp, REDUCE, state } from "../state";
 import { buildStack, createStage, ctex, glowFloor, THREE } from "./core";
 
@@ -6,7 +7,8 @@ export function initBuild() {
   const el = $("#buildStage");
   const S = createStage(el, $<HTMLCanvasElement>("#buildGL"), 30);
   if (!S) {
-    $("#buildGL").hidden = true;
+    el.hidden = true;
+    el.closest(".build-grid")?.classList.add("no-3d");
     return;
   }
 
@@ -119,6 +121,6 @@ export function initBuild() {
   S.onDragEnd = () => {
     autoP = 3;
   };
-  addEventListener("scroll", S.kick, { passive: true });
+  onScroll(() => S.kick());
   S.start();
 }

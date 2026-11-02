@@ -19,6 +19,7 @@ export function initHouse() {
   const S = createStage(el, $<HTMLCanvasElement>("#houseGL"), 34);
   if (!S) {
     el.hidden = true;
+    el.closest(".finder")?.classList.add("no-3d");
     return;
   }
 

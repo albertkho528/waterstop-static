@@ -5,6 +5,34 @@ import { REDUCE } from "../state";
 
 export { THREE };
 
+const IDLE_MS = 4000;
+const MAX_FPS = 30;
+const stageSyncs = new Set<() => void>();
+let focused = true;
+
+function environmentVisible() {
+  return (
+    typeof document === "undefined" ||
+    (document.visibilityState === "visible" && focused)
+  );
+}
+
+function syncStages() {
+  for (const sync of stageSyncs) sync();
+}
+
+if (typeof document !== "undefined" && typeof window !== "undefined") {
+  document.addEventListener("visibilitychange", syncStages);
+  window.addEventListener("blur", () => {
+    focused = false;
+    syncStages();
+  });
+  window.addEventListener("focus", () => {
+    focused = true;
+    syncStages();
+  });
+}
+
 export interface Stage {
   renderer: THREE.WebGLRenderer;
   scene: THREE.Scene;
@@ -69,8 +97,38 @@ export function createStage(
 
   let vis = true,
     raf = 0,
-    last = 0;
+    last = 0,
+    started = false,
+    sleeping = false,
+    idleTimer = 0;
   const v = new THREE.Vector3();
+
+  function clearIdle() {
+    if (!idleTimer) return;
+    clearTimeout(idleTimer);
+    idleTimer = 0;
+  }
+  function sleep() {
+    sleeping = true;
+    clearIdle();
+    if (raf) {
+      cancelAnimationFrame(raf);
+      raf = 0;
+    }
+  }
+  function wake() {
+    if (!started || !vis || !environmentVisible()) return;
+    sleeping = false;
+    last = performance.now();
+    clearIdle();
+    idleTimer = window.setTimeout(sleep, IDLE_MS);
+    if (!raf) raf = requestAnimationFrame(loop);
+  }
+  function sync() {
+    if (!started) return;
+    if (!vis || !environmentVisible()) sleep();
+    else wake();
+  }
   const S: Stage = {
     renderer,
     scene,
@@ -80,22 +138,23 @@ export function createStage(
     time: 0,
     dragMoved: 0,
     kick() {
-      if (!raf) {
-        last = performance.now();
-        raf = requestAnimationFrame(loop);
-      }
+      wake();
     },
     start() {
+      if (started) return;
+      started = true;
       resize();
       new ResizeObserver(resize).observe(el);
       new IntersectionObserver(
         ([e]) => {
           vis = e.isIntersecting;
-          if (vis) S.kick();
+          if (vis) wake();
+          else sleep();
         },
         { rootMargin: "150px" },
       ).observe(el);
-      S.kick();
+      stageSyncs.add(sync);
+      wake();
     },
     toScreen(x, y, z, m) {
       v.set(x, y, z);
@@ -105,13 +164,24 @@ export function createStage(
     },
   };
   function loop(now: number) {
+    raf = 0;
+    if (!started || !vis || !environmentVisible() || sleeping) return;
+    if (now - last < 1000 / MAX_FPS) {
+      raf = requestAnimationFrame(loop);
+      return;
+    }
     const dt = REDUCE ? 1 : Math.min(0.05, (now - last) / 1000);
     last = now;
     if (!REDUCE) S.time += dt;
     S.frame?.(dt);
     S.renderer.render(scene, camera);
     S.after?.();
-    raf = vis && !REDUCE ? requestAnimationFrame(loop) : 0;
+    if (REDUCE) {
+      sleeping = true;
+      clearIdle();
+      return;
+    }
+    if (!sleeping) raf = requestAnimationFrame(loop);
   }
   function resize() {
     S.w = el.clientWidth || 1;

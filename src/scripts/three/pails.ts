@@ -38,6 +38,7 @@ export function initPails() {
   const S = createStage(el, $<HTMLCanvasElement>("#pailGL"), 30);
   if (!S) {
     el.hidden = true;
+    el.closest(".prod3d")?.classList.add("no-3d");
     return;
   }
 
@@ -455,35 +456,37 @@ export function initPails() {
   };
   S.start();
   hooks.pailGoTo(state.pSel);
-  // redraw labels once web fonts are ready
-  document.fonts?.ready.then(() => {
-    items.forEach((it, i) => {
-      const p = PRODUCTS[i];
-      if (p.photo) return;
-      const fresh =
-        p.shape === "kit"
-          ? [
-              flatLabel(p, p.pack?.sack ?? ""),
-              flatLabel(p, p.pack?.can ?? "", true),
-            ]
-          : p.shape === "sack"
-            ? [flatLabel(p, p.pack?.sack ?? "")]
-            : [
-                wrapLabel(
-                  p,
-                  p.shape === "pail"
-                    ? p.pack?.pail
-                    : p.shape === "bottle"
-                      ? p.pack?.bottle
-                      : undefined,
-                ),
-              ];
-      it.labels.forEach((m, j) => {
-        m.map?.dispose();
-        m.map = fresh[j];
-        m.needsUpdate = true;
+  // Redraw only if the labels were drawn before the webfonts finished loading.
+  if (document.fonts?.status === "loading") {
+    document.fonts.ready.then(() => {
+      items.forEach((it, i) => {
+        const p = PRODUCTS[i];
+        if (p.photo) return;
+        const fresh =
+          p.shape === "kit"
+            ? [
+                flatLabel(p, p.pack?.sack ?? ""),
+                flatLabel(p, p.pack?.can ?? "", true),
+              ]
+            : p.shape === "sack"
+              ? [flatLabel(p, p.pack?.sack ?? "")]
+              : [
+                  wrapLabel(
+                    p,
+                    p.shape === "pail"
+                      ? p.pack?.pail
+                      : p.shape === "bottle"
+                        ? p.pack?.bottle
+                        : undefined,
+                  ),
+                ];
+        it.labels.forEach((m, j) => {
+          m.map?.dispose();
+          m.map = fresh[j];
+          m.needsUpdate = true;
+        });
       });
+      S.kick();
     });
-    S.kick();
-  });
+  }
 }

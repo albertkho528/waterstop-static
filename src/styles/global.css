@@ -318,6 +318,11 @@ nav.links a:hover {
   border-left: 0;
   border-top: 0;
 }
+.build-grid.no-3d,
+.finder.no-3d,
+.prod3d.no-3d {
+  grid-template-columns: 1fr;
+}
 .hud {
   position: absolute;
   z-index: 3;
