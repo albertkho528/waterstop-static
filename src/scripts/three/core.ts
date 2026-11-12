@@ -146,8 +146,8 @@ export function createStage(
       resize();
       new ResizeObserver(resize).observe(el);
       new IntersectionObserver(
-        ([e]) => {
-          vis = e.isIntersecting;
+        (entries) => {
+          vis = entries[entries.length - 1].isIntersecting;
           if (vis) wake();
           else sleep();
         },
