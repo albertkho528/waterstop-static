@@ -1,11 +1,37 @@
 // Entry point: the regular UI runs immediately; each 3D scene loads when it is almost visible (saves data on phones).
 import "./ui";
 
+// yield between loading a scene's code and building it, so the two do not form one long task
+const nextTask = () => new Promise<void>((r) => setTimeout(r, 0));
 const lazy: [string, () => Promise<void>][] = [
-  ["#heroStage", () => import("./three/hero").then((m) => m.initHero())],
-  ["#buildStage", () => import("./three/build").then((m) => m.initBuild())],
-  ["#houseStage", () => import("./three/house").then((m) => m.initHouse())],
-  ["#pailStage", () => import("./three/pails").then((m) => m.initPails())],
+  [
+    "#heroStage",
+    () =>
+      import("./three/hero").then(
+        async (m) => (await nextTask(), m.initHero()),
+      ),
+  ],
+  [
+    "#buildStage",
+    () =>
+      import("./three/build").then(
+        async (m) => (await nextTask(), m.initBuild()),
+      ),
+  ],
+  [
+    "#houseStage",
+    () =>
+      import("./three/house").then(
+        async (m) => (await nextTask(), m.initHouse()),
+      ),
+  ],
+  [
+    "#pailStage",
+    () =>
+      import("./three/pails").then(
+        async (m) => (await nextTask(), m.initPails()),
+      ),
+  ],
 ];
 
 function fail(selector: string) {

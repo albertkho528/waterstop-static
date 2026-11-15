@@ -5,10 +5,9 @@ import { REDUCE } from "../state";
 
 export { THREE };
 
-// Before the visitor interacts, scenes sleep after IDLE_MS so page load (and Lighthouse) stays quiet.
-// After the first scroll, pointer, touch or key, scenes animate at the display's own frame rate
-// for as long as they are on screen and the tab is visible.
-const IDLE_MS = 4000;
+// Until the visitor interacts, each scene draws only the frames it is asked for (one still frame,
+// plus redraws on resize), so page load stays quiet. After the first scroll, pointer, touch or key,
+// scenes animate at the display's own frame rate while they are on screen and the tab is visible.
 const stageSyncs = new Set<() => void>();
 let engaged = false;
 const ENGAGE_EVENTS = [
@@ -65,20 +64,48 @@ export interface Stage {
   ) => [number, number, number];
 }
 
+let software: boolean | undefined;
+/** True when WebGL runs on the CPU (no usable GPU): SwiftShader, llvmpipe, Microsoft Basic Render. */
+function softwareGL() {
+  if (software !== undefined) return software;
+  software = false;
+  try {
+    const gl = document.createElement("canvas").getContext("webgl");
+    if (gl) {
+      const info = gl.getExtension("WEBGL_debug_renderer_info");
+      const name = String(
+        gl.getParameter(info ? info.UNMASKED_RENDERER_WEBGL : gl.RENDERER),
+      );
+      software = /swiftshader|llvmpipe|softpipe|software|basic render/i.test(
+        name,
+      );
+      gl.getExtension("WEBGL_lose_context")?.loseContext();
+    }
+  } catch {
+    /* keep the default */
+  }
+  return software;
+}
+
 function mkRenderer(canvas: HTMLCanvasElement) {
   try {
+    // Without a GPU every pixel is shaded on the CPU, so skip MSAA and draw at 1x there;
+    // devices with a GPU keep full antialiasing and high-DPI rendering.
+    const cpu = softwareGL();
     const r = new THREE.WebGLRenderer({
       canvas,
-      antialias: true,
+      antialias: !cpu,
       alpha: true,
       powerPreference: "high-performance",
     });
     r.setPixelRatio(
-      Math.min(innerWidth < 700 ? 1.5 : 2, devicePixelRatio || 1),
+      cpu ? 1 : Math.min(innerWidth < 700 ? 1.5 : 2, devicePixelRatio || 1),
     );
     r.outputColorSpace = THREE.SRGBColorSpace;
     r.toneMapping = THREE.ACESFilmicToneMapping;
     r.toneMappingExposure = 1.05;
+    // Error checks force the page to wait for every shader compile; keep them for development only.
+    r.debug.checkShaderErrors = import.meta.env.DEV;
     return r;
   } catch {
     return null;
@@ -109,27 +136,101 @@ export function createStage(
     last = 0,
     started = false,
     sleeping = false,
-    idleTimer = 0;
+    ready = false;
   const v = new THREE.Vector3();
 
-  function clearIdle() {
-    if (!idleTimer) return;
-    clearTimeout(idleTimer);
-    idleTimer = 0;
+  // First frame without long tasks: shaders compile on first use, and on some devices (and in
+  // Lighthouse) that compile is synchronous. So compile one object per task, draw the first frame
+  // while the stage is hidden, and reveal it once a fence says the GPU has finished.
+  // With a real GPU this takes a few frames; without one it keeps long tasks off the main thread.
+  function warmUp() {
+    el.style.visibility = "hidden";
+    const gl = S.renderer.getContext();
+    const gl2 = gl instanceof WebGL2RenderingContext ? gl : null;
+    const reveal = (fence: WebGLSync | null) => {
+      if (fence) gl2?.deleteSync(fence);
+      el.style.visibility = "";
+      ready = true;
+      sync();
+    };
+    // Small slices, so no single task waits for more than one shader program: compile() queues
+    // each program, then hidden renders draw one object at a time (objects that start invisible
+    // are warmed too, so they do not hitch when they first appear).
+    const parts: THREE.Object3D[] = [];
+    scene.traverse((o) => {
+      if (
+        (o as THREE.Mesh).isMesh ||
+        (o as THREE.Points).isPoints ||
+        (o as THREE.Line).isLine
+      )
+        parts.push(o);
+    });
+    const shown = parts.map((o) => o.visible);
+    const groups: [THREE.Object3D, boolean][] = [];
+    scene.traverse((o) => {
+      if (!parts.includes(o)) groups.push([o, o.visible]);
+    });
+    // work in ~8 ms slices: fast devices finish in a few tasks, slow ones get one shader per task
+    let k = 0;
+    const compileNext = () => {
+      const t = performance.now();
+      while (k < parts.length && performance.now() - t < 8)
+        S.renderer.compile(parts[k++], camera, scene);
+      if (k < parts.length) return void setTimeout(compileNext, 0);
+      gl.flush();
+      k = 0;
+      setTimeout(renderNext, 0);
+    };
+    // warm-up draws go to a 1x1 viewport: same shaders, almost no pixels to shade
+    const renderNext = () => {
+      const t = performance.now();
+      S.renderer.setScissorTest(true);
+      S.renderer.setScissor(0, 0, 1, 1);
+      S.renderer.setViewport(0, 0, 1, 1);
+      while (k < parts.length && performance.now() - t < 8) {
+        const target = parts[k++];
+        parts.forEach((o) => (o.visible = false));
+        for (let o: THREE.Object3D | null = target; o; o = o.parent)
+          o.visible = true;
+        S.renderer.render(scene, camera);
+      }
+      S.renderer.setScissorTest(false);
+      S.renderer.setViewport(0, 0, S.w, S.h);
+      parts.forEach((o, i) => (o.visible = shown[i]));
+      groups.forEach(([o, v]) => (o.visible = v));
+      if (k < parts.length) return void setTimeout(renderNext, 0);
+      setTimeout(() => {
+        S.frame?.(0);
+        S.renderer.render(scene, camera);
+        S.after?.();
+        const fence = gl2?.fenceSync(gl2.SYNC_GPU_COMMANDS_COMPLETE, 0) ?? null;
+        gl.flush();
+        if (!gl2 || !fence) return reveal(null);
+        const t0 = performance.now();
+        const poll = () => {
+          if (
+            gl2.getSyncParameter(fence, gl2.SYNC_STATUS) === gl2.SIGNALED ||
+            performance.now() - t0 > 3000
+          )
+            reveal(fence);
+          else setTimeout(poll, 16);
+        };
+        setTimeout(poll, 16);
+      }, 32);
+    };
+    setTimeout(compileNext, 0);
   }
+
   function sleep() {
     sleeping = true;
-    clearIdle();
     if (raf) {
       cancelAnimationFrame(raf);
       raf = 0;
     }
   }
   function wake() {
-    if (!started || !vis || !environmentVisible()) return;
+    if (!ready || !vis || !environmentVisible()) return;
     sleeping = false;
-    clearIdle();
-    if (!engaged) idleTimer = window.setTimeout(sleep, IDLE_MS);
     // Only reset the clock when the loop is not already running; resetting it on every
     // scroll or pointer event made each frame look "too soon" and skip rendering.
     if (!raf) {
@@ -138,10 +239,11 @@ export function createStage(
     }
   }
   function sync() {
-    if (!started) return;
+    if (!ready) return;
     if (!vis || !environmentVisible()) sleep();
     else wake();
   }
+
   const S: Stage = {
     renderer,
     scene,
@@ -167,7 +269,7 @@ export function createStage(
         { rootMargin: "150px" },
       ).observe(el);
       stageSyncs.add(sync);
-      wake();
+      warmUp();
     },
     toScreen(x, y, z, m) {
       v.set(x, y, z);
@@ -185,9 +287,8 @@ export function createStage(
     S.frame?.(dt);
     S.renderer.render(scene, camera);
     S.after?.();
-    if (REDUCE) {
+    if (REDUCE || !engaged) {
       sleeping = true;
-      clearIdle();
       return;
     }
     if (!sleeping) raf = requestAnimationFrame(loop);
