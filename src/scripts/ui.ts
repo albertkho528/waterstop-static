@@ -25,11 +25,16 @@ const t = data.t as unknown as import("../i18n").Dict;
 {
   const t = $("#cureTxt"),
     bar = $("#cureBar");
-  let range = 1;
+  let range = 1,
+    shown = -1;
   const update = () => {
-    const p = clamp(scrollY / range);
-    t.textContent = Math.round(p * 100) + "%";
-    bar.style.width = p * 100 + "%";
+    const p = clamp(scrollY / range),
+      pct = Math.round(p * 100);
+    if (pct !== shown) {
+      shown = pct;
+      t.textContent = pct + "%";
+    }
+    bar.style.transform = `scaleX(${p.toFixed(4)})`;
   };
   const measure = () => {
     range = Math.max(1, document.documentElement.scrollHeight - innerHeight);
@@ -138,6 +143,7 @@ resEl.addEventListener("click", (e) => {
 {
   const list = $("#buildSteps");
   const items = [...list.children] as HTMLElement[];
+  const buildBar = $("#buildBar");
   let active = 0,
     listTop = 0,
     listHeight = 1,
@@ -157,7 +163,7 @@ resEl.addEventListener("click", (e) => {
       $("#buildStatus").innerHTML =
         `${data.t.build.status}: <b>${BUILD_STEPS[a].status}</b>`;
     }
-    $("#buildBar").style.width = (p * 100).toFixed(1) + "%";
+    buildBar.style.transform = `scaleX(${p.toFixed(4)})`;
   };
   const measure = () => {
     const r = list.getBoundingClientRect();

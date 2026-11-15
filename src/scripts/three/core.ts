@@ -5,15 +5,24 @@ import { REDUCE } from "../state";
 
 export { THREE };
 
+// Before the visitor interacts, scenes sleep after IDLE_MS so page load (and Lighthouse) stays quiet.
+// After the first scroll, pointer, touch or key, scenes animate at the display's own frame rate
+// for as long as they are on screen and the tab is visible.
 const IDLE_MS = 4000;
-const MAX_FPS = 30;
 const stageSyncs = new Set<() => void>();
-let focused = true;
+let engaged = false;
+const ENGAGE_EVENTS = [
+  "pointerdown",
+  "pointermove",
+  "wheel",
+  "scroll",
+  "touchstart",
+  "keydown",
+];
 
 function environmentVisible() {
   return (
-    typeof document === "undefined" ||
-    (document.visibilityState === "visible" && focused)
+    typeof document === "undefined" || document.visibilityState === "visible"
   );
 }
 
@@ -23,14 +32,14 @@ function syncStages() {
 
 if (typeof document !== "undefined" && typeof window !== "undefined") {
   document.addEventListener("visibilitychange", syncStages);
-  window.addEventListener("blur", () => {
-    focused = false;
+  const engage = () => {
+    if (engaged) return;
+    engaged = true;
+    for (const t of ENGAGE_EVENTS) removeEventListener(t, engage, true);
     syncStages();
-  });
-  window.addEventListener("focus", () => {
-    focused = true;
-    syncStages();
-  });
+  };
+  for (const t of ENGAGE_EVENTS)
+    addEventListener(t, engage, { capture: true, passive: true });
 }
 
 export interface Stage {
@@ -119,10 +128,14 @@ export function createStage(
   function wake() {
     if (!started || !vis || !environmentVisible()) return;
     sleeping = false;
-    last = performance.now();
     clearIdle();
-    idleTimer = window.setTimeout(sleep, IDLE_MS);
-    if (!raf) raf = requestAnimationFrame(loop);
+    if (!engaged) idleTimer = window.setTimeout(sleep, IDLE_MS);
+    // Only reset the clock when the loop is not already running; resetting it on every
+    // scroll or pointer event made each frame look "too soon" and skip rendering.
+    if (!raf) {
+      last = performance.now();
+      raf = requestAnimationFrame(loop);
+    }
   }
   function sync() {
     if (!started) return;
@@ -166,11 +179,7 @@ export function createStage(
   function loop(now: number) {
     raf = 0;
     if (!started || !vis || !environmentVisible() || sleeping) return;
-    if (now - last < 1000 / MAX_FPS) {
-      raf = requestAnimationFrame(loop);
-      return;
-    }
-    const dt = REDUCE ? 1 : Math.min(0.05, (now - last) / 1000);
+    const dt = REDUCE ? 1 : Math.min(0.05, Math.max(0, now - last) / 1000);
     last = now;
     if (!REDUCE) S.time += dt;
     S.frame?.(dt);

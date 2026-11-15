@@ -190,6 +190,7 @@ export function initHouse() {
     fitK = 1,
     selected = "";
   const hsBtns = [...$("#hotspots").children] as HTMLElement[];
+  const hsNames = hsBtns.map((b) => b.querySelector("span") as HTMLElement);
 
   hooks.houseFocus = (id, fly = true) => {
     selected = id;
@@ -272,8 +273,7 @@ export function initHouse() {
       if (!out) placed.push([x, y]);
       b.style.transform = `translate(${x.toFixed(1)}px,${y.toFixed(1)}px)`;
       b.classList.toggle("flip", x > S.w - 170);
-      (b.querySelector("span") as HTMLElement).style.display =
-        selected === a.id || S.w > 620 ? "" : "none";
+      hsNames[i].style.display = selected === a.id || S.w > 620 ? "" : "none";
     });
   };
   S.onDrag = (dx) => {

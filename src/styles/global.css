@@ -239,8 +239,9 @@ nav.links a:hover {
 }
 .cure-bar i {
   position: absolute;
-  inset: 0 auto 0 0;
-  width: 0;
+  inset: 0;
+  transform: scaleX(0);
+  transform-origin: left;
   background: var(--accent);
 }
 .menu-btn {
@@ -739,8 +740,9 @@ section.sec > .wrap {
 }
 .build-hud .bar i {
   position: absolute;
-  inset: 0 auto 0 0;
-  width: 0;
+  inset: 0;
+  transform: scaleX(0);
+  transform-origin: left;
   background: var(--accent);
 }
 .build-steps {

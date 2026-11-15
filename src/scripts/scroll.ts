@@ -49,4 +49,8 @@ export function requestMeasure() {
 if (typeof window !== "undefined") {
   addEventListener("scroll", scheduleScroll, { passive: true });
   addEventListener("resize", scheduleMeasure, { passive: true });
+  // Page height also changes without a resize (images, the mobile menu, swapped content);
+  // re-measure then so cached section positions never go stale.
+  if (typeof ResizeObserver !== "undefined")
+    new ResizeObserver(scheduleMeasure).observe(document.documentElement);
 }
